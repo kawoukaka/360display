@@ -1,0 +1,111 @@
+
+/*
+	Sets the style of the image slider wrapper <div> to be centered horizontally and vertically.
+	It also sets its default dimensions and the overflowing hidden (to fix the IE image positioning bug).
+*/
+#threesixty {
+	position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: 0px;
+			margin-left: -500px;
+			margin-top: -500px;
+			border: 0px;
+			width: 1000px;
+			height: 1000px;
+			z-index: 0;
+}
+/*
+	Defines the criteria for the max. 1024px wide tablets portrait mode and sets the image slider dimensions and centering according to it.
+*/
+
+/*
+	Defines the criteria of the max. 480px wide mobiles' landscape mode and sets the image slider dimensions and centering according to it.
+*/
+@media	screen and (max-device-width: 480px) and (orientation:landscape),
+				screen and (-webkit-min-device-pixel-ratio: 2) and (orientation:landscape) {
+	#threesixty {
+		width:1000px;
+		height:1000px;
+
+	}
+}
+/*
+	Defines the criteria of the max. 480px wide mobiles' portrait mode and sets the image slider dimensions and centering according to it.
+*/
+@media	screen and (max-device-width: 480px) and (orientation:portrait),
+				screen and (-webkit-min-device-pixel-ratio: 2) and (orientation:portrait) {
+	#threesixty {
+		width:1000px;
+		height:1000px;
+
+	}
+}
+/*
+	Makes the image slider invisible by default
+*/
+#threesixty_images {
+	
+}
+
+
+#myCanvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1000px;
+}
+/*
+	Sets every image in the slider to be absolute positioned and dynamically sized.
+*/
+/* This one fixes the IE positioning bug */
+#threesixty_images img{
+	position:absolute;
+	
+	top:0;
+	width:1000;
+	height:1000;
+	
+}
+/*
+	Sets the style of the visible current frame of the image slider animation
+*/
+.current-image {
+	visibility:visible;
+	width:100%;
+}
+/*
+	Sets the style of the visible "previous" frame of the image slider animation
+*/
+.previous-image {
+	visibility:hidden;
+	width:0;
+}
+/*
+	Sets the dimensions of the CanvasLoader placeholder <div>, it also centeres it horizontally and vertically inside the wrapper and makes it invisible by default
+*/
+#spinner {
+	position:absolute;
+	left:50%;
+	top:50%;
+	width:90px;
+	height:90px;
+	margin-left:-45px;
+	margin-top:-50px;
+	display:none;
+}
+/*
+	Sets the style of the percentage <span> of the preloader by setting its dimensions and centering it horizontally and vertically 
+*/
+#spinner span {
+	position:absolute;
+	top:50%;
+	width:100%;
+	color:#333;
+	font:0.8em Arial, Verdana, sans;
+	text-align:center;
+	line-height:0.6em;
+	margin-top:-0.3em;
+}
