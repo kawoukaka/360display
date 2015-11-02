@@ -7,8 +7,13 @@ $(document).ready(function () {
 		picYNum,
 		loadedpicX=0,
 		loadedpicY=0,
+		firstRoundNum = 0,
+		SecondRoundNum =0,
+		SecondRoundPicX = 0,
+		SecondRoundPicY = 0,
 		currentNum=0,
-		currentReNum=0,
+		currentFirstRNum=0,
+		currentSecondRNum=0,
 		numberOfImg,
 		imgFolder,
 		reimgFolder,
@@ -43,35 +48,18 @@ $(document).ready(function () {
 		document.body.style.padding ="0";
 		document.body.style.overflow = "hidden"; //canvas is a few pixels taller than innerHeight… (?)			
 		
-		buildProgress();
 		var t;
-		var i;
-		var j;
-		for(i=0;i<picYNum;i++)
-		{
-			for(j=0;j<picXNum;j++)
-			{
-				
-				loadReNext(i,j);
-				loadNext(i,j);
-			}
-		}
+		
 
-		for(i=0;i<picYNum;i++)
-		{
-			for(j=0;j<picXNum;j++)
-			{
-				loadNext(i,j);
-			}
-		}
 		for(t=0;t<picXNum;t++)
 		{
-			smallDistanceImageXArr.push(t*screen.width/picXNum);
+			smallDistanceImageXArr.push(t*window.innerWidth/picXNum);
 		}
 		for(t=0;t<picYNum;t++)
 		{
-			smallDistanceImageYArr.push(t*screen.height/picYNum);
+			smallDistanceImageYArr.push(300+t*window.innerHeight/picYNum);
 		}
+		loadFirstImage();
 		
 	}
 	function buildProgress(){
@@ -87,44 +75,145 @@ $(document).ready(function () {
 	    	progress.style.borderRadius = progressDiam / 2 + "px";
 	    	progress.style.position = "fixed";
 	    	progress.style.left = "50%";
-	    	progress.style.top = "50%";
+	    	progress.style.top = "10%";
 	    	progress.style.marginTop = - progressDiam / 2 + "px";
 	    	progress.style.marginLeft = - progressDiam / 2 + "px";
 	    	progress.style.fontFamily = progressFontFamily;
 	    	progress.style.fontSize = progressFontSize;
 	    	progress.style.zIndex = 1000;
-	    	progress.update = function(num){
-	    		var t = picXNum * picYNum;
-				progress.innerHTML = currentReNum + "/" + t;
-	    	}
+	    	progress.update = function(message,num,totalnum){
+	    		
+				progress.innerHTML = message + Math.floor(num/totalnum*100) + "%";
+				
+	    	};
 			document.body.appendChild(progress);
 		}
-	function loadReNext(loadedpicX,loadedpicY){
-		currentReNum++;
-		if (currentReNum < (picXNum * picYNum)) 
+	function loadFirstImage()
+	{
+		var img = new Image();
+		img.width = 1000;
+		img.height = 1000;
+		img.listId = currentFirstRNum;
+		img.src = reimgFolder+ "/0_0.jpg";
+		
+		img.onload = function(){
+			imgReList[currentFirstRNum] = img;
+			ctx.width = img.width;
+			ctx.height = img.height;
+			ctx.drawImage(img, 0, 0);
+
+			$.ajax({ url: 'compressingFirstGroup.php',
+				type: 'post',
+				success: function(data) {
+					buildProgress();
+					firstRoundNum = data;
+					
+					if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
+
+					loadFirstRound();
+
+					$.ajax({ url: 'compressingSecondGroup.php',
+					type: 'post',
+					success: function(data) {
+							var picX= data.substr(2,data.length-2);
+							var picY = data.substr(0,1);
+							SecondRoundNum = picX * picY;
+
+							loadSecondRound();
+						}
+					});
+				}
+				
+			});
+		};
+	}
+	function loadFirstRound(){
+
+		currentFirstRNum++;
+			
+		if (currentFirstRNum < firstRoundNum) 
+		{		
+
+			var img = new Image();
+			img.width = 1000;
+			img.height = 1000;
+			img.listId = currentFirstRNum;
+			
+			img.src = reimgFolder+ "/0_" + currentFirstRNum + ".jpg";
+			
+			img.onload = function(){
+				imgReList[this.listId] = this;
+				if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
+				loadFirstRound();
+
+				play();
+				
+				
+
+				
+
+			};		
+		} else if (currentFirstRNum == firstRoundNum){ 
+
+			
+
+			//currentFirstRNum = firstRoundNum - 1;	
+			
+			
+		}	
+	}	
+	function loadSecondRound(){
+		
+		if(SecondRoundPicY<9)
+		{
+
+			if(SecondRoundPicX<49)
+			{
+				SecondRoundPicX++;
+			}
+			else
+			{
+				SecondRoundPicX=0;
+				SecondRoundPicY++;
+			}
+		}
+		
+		currentSecondRNum++;
+		if (currentSecondRNum < SecondRoundNum) 
 		{		
 			var img = new Image();
 			img.width = 1000;
 			img.height = 1000;
-			img.listId = currentReNum;
+			img.listId = currentFirstRNum + currentSecondRNum;
+			if(SecondRoundPicY<9)
+				img.src = reimgFolder+ "/" + SecondRoundPicY + "_" + SecondRoundPicX + ".jpg";
 			
-			img.src = reimgFolder+ "/" + loadedpicX + "_" + loadedpicY + ".jpg";
-
 			img.onload = function(){
 				imgReList[this.listId] = this;
-				play();
-				if (progress) progress.update(currentReNum);
-			}		
-		} else if (currentReNum == (picXNum*picYNum)){ 
 
-			if (progress) {
-				document.body.removeChild(progress);
-				progress = null;
+				loadSecondRound();
+				//play();
+				if (progress) progress.update("第二段加载：",parseInt(currentFirstRNum) + parseInt(currentSecondRNum),parseInt(firstRoundNum) + parseInt(SecondRoundNum));
+				
+			};		
+		} else if (currentSecondRNum == SecondRoundNum){ 
+
+			
+			//currentSecondRNum = SecondRoundNum - 1;	
+
+			
+			var i;
+			var j;
+			for(i=0;i<9;i++)
+			{
+				for(j=0;j<50;j++)
+				{
+					loadNext(i,j);
+				}
 			}
-			currentReNum = picXNum*picYNum - 1;	
+			
 		}	
 	}
-
 	function loadNext(loadedpicX,loadedpicY)
 	{
 		
@@ -137,11 +226,23 @@ $(document).ready(function () {
 			img.src = imgFolder+ "/" + loadedpicX + "_" + loadedpicY + ".jpg";
 
 			img.onload = function(){
+				
 				if(currentNum<(picXNum * picYNum)) 
 					imgReList[currentNum].src = this.src;
+
+				if (progress) progress.update("第三段加载：",currentNum,picXNum * picYNum);
 				
-			}		
+
+			};		
 		} 
+		
+		if(currentNum == (picXNum * picYNum-1))
+		{
+			if (progress) {
+				document.body.removeChild(progress);
+				progress = null;
+			}
+		}
 
 	}
 
@@ -157,7 +258,7 @@ $(document).ready(function () {
 		document.ontouchmove = function(e){
 			onMouseMove(e.touches[0]);
 			return false;
-		}
+		};
 
 	}	
 
@@ -166,7 +267,7 @@ $(document).ready(function () {
 		document.removeEventListener('mousemove', onMouseMove);
 		if (playInterval) {
 			clearInterval(playInterval);
-			playInterval == null;
+			playInterval = null;
 		}
 	}
 
@@ -218,7 +319,7 @@ $(document).ready(function () {
 		{
 			indy = smallDistanceImageYArr[length-1];
 		}		
-		console.log(mouseYposition,indx + indy * 50);
+
 		showImage(indx + indy * 50);
 		
 	}
@@ -226,7 +327,6 @@ $(document).ready(function () {
 	function showImage(id)
 	{
 		if (id >= 0 && id < imgReList.length){
-			console.log("id",id);
 			var img = imgReList[id];
 
 			ctx.width = img.width;
