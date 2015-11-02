@@ -5,23 +5,24 @@ $t = 0;
 		$array =array();
 		for($j=0;$j<1;$j++)
 		{
-			for($i=0;$i<50;$i++)
+			for($i=1;$i<50;$i++)
 			{
 				$source_photo = 'images/'.$j.'_'.$i.'.jpg';
-				$randomFileName = substr(md5(uniqid(rand())),0,6).'_'.$j.'_'.$i.'.jpg';
-				$dest_photo = 'resizeImages/'.$randomFileName;
-				$t++;
-				$result = compress_image($source_photo, $dest_photo, 70);
-				array_push($array,$randomFileName);
+				$dest_photo = 'resizeImages/'.$j.'_'.$i.'.jpg';
+				//if (!file_exists($dest_photo)) {
+					$t++;
+					$result = compress_image($source_photo, $dest_photo, 70);
+				//}
+				//array_push($array,$randomFileName); 
 				
 			}
 		}
 
 
-		if($t==50)
+		if($t==49)
 		{
-			echo json_encode($array);
-			
+			//echo json_encode($array);
+			echo $t+1;
 			
 		}
 
