@@ -9,10 +9,10 @@ $t = 0;
 			{
 				$source_photo = 'images/'.$j.'_'.$i.'.jpg';
 				$dest_photo = 'resizeImages/'.$j.'_'.$i.'.jpg';
-				//if (!file_exists($dest_photo)) {
+				if (!file_exists($dest_photo)) {
 					$t++;
 					$result = compress_image($source_photo, $dest_photo, 70);
-				//}
+				}
 				//array_push($array,$randomFileName); 
 				
 			}
@@ -25,6 +25,11 @@ $t = 0;
 			echo $t+1;
 			
 		}
+		else
+		{
+			echo "skip";
+		}
+
 
 
 

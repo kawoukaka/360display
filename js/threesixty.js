@@ -23,6 +23,9 @@ $(document).ready(function () {
 		smallDistanceImageXArr =[],
 		smallDistanceImageYArr =[],
 		playInterval = 20,
+		ready,
+		indx=0,
+		indy=0,
 
 		progressDiam		="110",		// progress diameter
 		progressFontFamily	="Helvetica, Arial, sans-serif",
@@ -51,14 +54,16 @@ $(document).ready(function () {
 		var t;
 		
 
+
 		for(t=0;t<picXNum;t++)
 		{
-			smallDistanceImageXArr.push(t*window.innerWidth/picXNum);
+			smallDistanceImageXArr.push(parseInt(c.getBoundingClientRect().left) + t*c.width/picXNum);
 		}
 		for(t=0;t<picYNum;t++)
 		{
-			smallDistanceImageYArr.push(300+t*window.innerHeight/picYNum);
+			smallDistanceImageYArr.push(200 + t*c.height/picYNum);
 		}
+		
 		loadFirstImage();
 		
 	}
@@ -106,11 +111,19 @@ $(document).ready(function () {
 				type: 'post',
 				success: function(data) {
 					buildProgress();
-					firstRoundNum = data;
+					if(data!="skip")
+					{
+						firstRoundNum = data;
 					
-					if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
+						if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
 
-					loadFirstRound();
+						loadFirstRound(0);
+					}
+					else
+					{
+						loadFirstRound(50);
+					}
+
 
 					
 				}
@@ -118,8 +131,11 @@ $(document).ready(function () {
 			});
 		};
 	}
-	function loadFirstRound(){
-
+	function loadFirstRound(roundNum){
+		if(roundNum!=0)
+		{
+			firstRoundNum=roundNum;
+		}
 		currentFirstRNum++;
 			
 		if (currentFirstRNum < firstRoundNum) 
@@ -135,7 +151,7 @@ $(document).ready(function () {
 			img.onload = function(){
 				imgReList[this.listId] = this;
 				if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
-				loadFirstRound();
+				loadFirstRound(roundNum);
 
 				play();
 				
@@ -148,22 +164,33 @@ $(document).ready(function () {
 			$.ajax({ url: 'compressingSecondGroup.php',
 					type: 'post',
 					success: function(data) {
-							var picX= data.substr(2,data.length-2);
-							var picY = data.substr(0,1);
-							SecondRoundNum = picX * picY;
+							if(data!="skip")
+							{
+								var picX= data.substr(2,data.length-2);
+								var picY = data.substr(0,1);
+								SecondRoundNum = picX * picY;
 
-							loadSecondRound();
+								loadSecondRound(0);
+							}
+							else
+							{
+								loadSecondRound(400);
+							}
 						}
 					});
 			
 
-			//currentFirstRNum = firstRoundNum - 1;	
+			currentFirstRNum = firstRoundNum - 1;	
 			
 			
 		}	
 	}	
-	function loadSecondRound(){
+	function loadSecondRound(roundNum){
 		
+		if(roundNum !=0)
+		{
+			SecondRoundNum = roundNum;
+		}	
 		if(SecondRoundPicY<9)
 		{
 
@@ -191,7 +218,7 @@ $(document).ready(function () {
 			img.onload = function(){
 				imgReList[this.listId] = this;
 
-				loadSecondRound();
+				loadSecondRound(roundNum);
 				//play();
 				if (progress) progress.update("第二段加载：",parseInt(currentFirstRNum) + parseInt(currentSecondRNum),parseInt(firstRoundNum) + parseInt(SecondRoundNum));
 				
@@ -254,8 +281,11 @@ $(document).ready(function () {
 	function play()
 	{
 		stop();
-		document.addEventListener('mousemove', onMouseMove, false);
-		document.ontouchmove = function(e){
+		c.addEventListener('mousemove', onMouseMove, false);
+		c.addEventListener('mousedown', onMouseDown, false);
+		c.addEventListener('mouseup', onMouseUp, false);
+		document.addEventListener('mouseover',function(){ready= false;console.log("here")});
+		c.ontouchmove = function(e){
 			onMouseMove(e.touches[0]);
 			return false;
 		};
@@ -264,63 +294,78 @@ $(document).ready(function () {
 
 	function stop()
 	{
-		document.removeEventListener('mousemove', onMouseMove);
+		c.removeEventListener('mousemove', onMouseMove, true);
+		c.removeEventListener('mousedown', onMouseDown, true);
+		c.removeEventListener('mouseup', onMouseUp, true);
 		if (playInterval) {
 			clearInterval(playInterval);
 			playInterval = null;
 		}
 	}
-
+	function onMouseUp(e)
+	{
+		ready = false;
+	}
+	function onMouseDown(e)
+	{
+		ready = true;
+	}
 	function onMouseMove(e)
 	{
-		mouseXposition = e.pageX;
-		mouseYposition = e.pageY;
-		var i;
-		var indx=0;
-		var indy=0;
+		e = e || windows.event;
+		e.preventDefault();
+		if(ready)
+		{
 
-		for(i=0;i<smallDistanceImageXArr.length;i++)
-			{
-				if(i+1<smallDistanceImageXArr.length)
-				{
-					if(mouseXposition > smallDistanceImageXArr[i] && mouseXposition< smallDistanceImageXArr[i+1])
-					{
-						indx = i;
-							
-					}
-				}
-
-			}
+			mouseXposition = e.clientX;
+			mouseYposition = e.clientY;
+			var i;
 			
-		for(i=0;i<smallDistanceImageYArr.length;i++)
-			{
-				if(i+1<smallDistanceImageYArr.length)
+			
+			for(i=0;i<smallDistanceImageXArr.length;i++)
 				{
-					if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
+					if(i+1<smallDistanceImageXArr.length)
 					{
-						indy = i;
+						if(mouseXposition > smallDistanceImageXArr[i] && mouseXposition< smallDistanceImageXArr[i+1])
+						{
+
+							indx = i;
+						}
 					}
 
 				}
-			}
-		if(mouseXposition < 0 )
-		{
-			indx = 0;
-		}
-		if(mouseXposition > smallDistanceImageXArr[length-1])
-		{
-			indx = smallDistanceImageXArr[length-1];
-		}
-		if(mouseYposition < 0 )
-		{
-			indy = 0;
-		}
-		if(mouseYposition > smallDistanceImageYArr[length-1])
-		{
-			indy = smallDistanceImageYArr[length-1];
-		}		
+				
+			for(i=0;i<smallDistanceImageYArr.length;i++)
+				{
+					if(i+1<smallDistanceImageYArr.length)
+					{
+						if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
+						{
+							indy = i;
+						}
 
-		showImage(indx + indy * 50);
+					}
+				}
+			// if(mouseXposition < 0 )
+			// {
+			// 	indx = 0;
+			// }
+			// if(mouseXposition > smallDistanceImageXArr[length-1])
+			// {
+			// 	indx = smallDistanceImageXArr[length-1];
+			// }
+			// if(mouseYposition < 0 )
+			// {
+			// 	indy = 0;
+			// }
+			// if(mouseYposition > smallDistanceImageYArr[length-1])
+			// {
+			// 	indy = smallDistanceImageYArr[length-1];
+			// }		
+
+			showImage(indx + indy * 50);
+			
+		}
 		
 	}
 
