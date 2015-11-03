@@ -115,13 +115,13 @@ $(document).ready(function () {
 					{
 						firstRoundNum = data;
 					
-						if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
+						if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
 
 						loadFirstRound(0);
 					}
 					else
 					{
-						loadFirstRound(50);
+						loadAllReImages();
 					}
 
 
@@ -130,6 +130,40 @@ $(document).ready(function () {
 				
 			});
 		};
+	}
+	function loadAllReImages()
+	{
+		for(var i=0;i<9;i++)
+		{
+			for(var j=0;j<50;j++)
+			{
+				var img = new Image();
+				img.width = 1000;
+				img.height = 1000;
+				img.listId = 50*i + j;
+				img.src = "resizeImages/" + i + "_" + j + ".jpg";
+				img.onload = function(){
+					if(this.listId != 449)
+					{
+						imgReList[this.listId] = this;
+						if (progress) progress.update("低精图加载：",this.listId,449);
+					}
+					else
+					{
+						var t;
+						var k;
+						for(t=0;t<9;t++)
+						{
+							for(k=0;k<50;k++)
+							{
+								loadNext(t,k);
+							}
+						}
+					}
+					play();
+				}
+			}
+		}
 	}
 	function loadFirstRound(roundNum){
 		if(roundNum!=0)
@@ -257,7 +291,7 @@ $(document).ready(function () {
 				if(currentNum<(picXNum * picYNum)) 
 					imgReList[currentNum].src = this.src;
 
-				if (progress) progress.update("第三段加载：",currentNum,picXNum * picYNum);
+				if (progress) progress.update("高精图加载：",currentNum,picXNum * picYNum);
 				
 
 			};		
@@ -284,7 +318,7 @@ $(document).ready(function () {
 		c.addEventListener('mousemove', onMouseMove, false);
 		c.addEventListener('mousedown', onMouseDown, false);
 		c.addEventListener('mouseup', onMouseUp, false);
-		document.addEventListener('mouseover',function(){ready= false;console.log("here")});
+		document.addEventListener('mouseover',function(){ready= false;});
 		c.ontouchmove = function(e){
 			onMouseMove(e.touches[0]);
 			return false;
