@@ -112,16 +112,7 @@ $(document).ready(function () {
 
 					loadFirstRound();
 
-					$.ajax({ url: 'compressingSecondGroup.php',
-					type: 'post',
-					success: function(data) {
-							var picX= data.substr(2,data.length-2);
-							var picY = data.substr(0,1);
-							SecondRoundNum = picX * picY;
-
-							loadSecondRound();
-						}
-					});
+					
 				}
 				
 			});
@@ -154,7 +145,16 @@ $(document).ready(function () {
 
 			};		
 		} else if (currentFirstRNum == firstRoundNum){ 
+			$.ajax({ url: 'compressingSecondGroup.php',
+					type: 'post',
+					success: function(data) {
+							var picX= data.substr(2,data.length-2);
+							var picY = data.substr(0,1);
+							SecondRoundNum = picX * picY;
 
+							loadSecondRound();
+						}
+					});
 			
 
 			//currentFirstRNum = firstRoundNum - 1;	
