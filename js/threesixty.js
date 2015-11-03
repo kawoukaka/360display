@@ -290,7 +290,7 @@ $(document).ready(function () {
 				
 				if(currentNum<(picXNum * picYNum)) 
 					imgReList[currentNum].src = this.src;
-
+				
 				if (progress) progress.update("高精图加载：",currentNum,picXNum * picYNum);
 				
 
@@ -407,7 +407,7 @@ $(document).ready(function () {
 	{
 		if (id >= 0 && id < imgReList.length){
 			var img = imgReList[id];
-
+			console.log(imgReList[id].src);
 			ctx.width = img.width;
 			ctx.height = img.height;
 			ctx.drawImage(img, 0, 0);
