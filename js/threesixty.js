@@ -53,7 +53,7 @@ $(document).ready(function () {
 		
 		var t;
 		
-
+		buildProgress();
 
 		for(t=0;t<picXNum;t++)
 		{
@@ -110,7 +110,7 @@ $(document).ready(function () {
 			$.ajax({ url: 'compressingFirstGroup.php',
 				type: 'post',
 				success: function(data) {
-					buildProgress();
+				
 					if(data!="skip")
 					{
 						firstRoundNum = data;
@@ -156,9 +156,27 @@ $(document).ready(function () {
 						{
 							for(k=0;k<50;k++)
 							{
-								loadNext(t,k);
+								var img = new Image();
+								img.width = 1000;
+								img.height = 1000;
+								img.src = "images/" + t + "_" + k + ".jpg";
+								img.listId = 50*t + k;
+								img.onload = function(){
+									
+									imgReList[this.listId]= this;
+									if (progress) progress.update("高精图加载：",this.listId,imgReList.length);
+									
+
+								};
+								
 							}
 						}
+						if (progress) {
+										document.body.removeChild(progress);
+										progress = null;
+									}
+						
+						
 					}
 					play();
 				}
