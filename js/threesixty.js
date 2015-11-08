@@ -472,7 +472,11 @@ $(document).ready(function () {
 	{
 		if (id >= 0 && id < imgReList.length){
 			var img = imgReList[id];
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> origin/master
 			ctx.width = img.width;
 			ctx.height = img.height;
 			ctx.drawImage(img, 0, 0);
