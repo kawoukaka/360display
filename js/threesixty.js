@@ -24,9 +24,26 @@ $(document).ready(function () {
 		smallDistanceImageYArr =[],
 		playInterval = 20,
 		ready,
+		deltaX = 0,
+		monitorStartTime = 0,
+		monitorInt = 10,
+		ticker = 0,
+		speedMultiplier = 5,
+		monitorStartTime = 0,
+		mouseStartXposition,
+		mouseSEndXposition,
+		mouseYposition,
 		indx=0,
 		indy=0,
+		endCol=0,
+		currentCol=0,
+		totalCols = 0,
 
+		cloudURLPath="http://res.cloudinary.com/diiseuaat/image/upload/",
+		cloudURLUserPath="v1446938651/test/",
+		urlParameters_small="c_scale,q_80,w_600/",
+
+		mprogress,
 		progressDiam		="110",		// progress diameter
 		progressFontFamily	="Helvetica, Arial, sans-serif",
 		progressFontSize	= "0.7em",
@@ -40,6 +57,7 @@ $(document).ready(function () {
 
 	function init(_picXNum,_picYNum,_folder,_refolder)
 	{
+		totalCols = _picXNum;
 		picXNum = _picXNum;
 		picYNum = _picYNum;
 		imgFolder= _folder;
@@ -55,10 +73,10 @@ $(document).ready(function () {
 		
 		buildProgress();
 
-		for(t=0;t<picXNum;t++)
-		{
-			smallDistanceImageXArr.push(parseInt(c.getBoundingClientRect().left) + t*c.width/picXNum);
-		}
+		// for(t=0;t<picXNum;t++)
+		// {
+		// 	smallDistanceImageXArr.push(parseInt(c.getBoundingClientRect().left) + t*c.width/picXNum);
+		// }
 		for(t=0;t<picYNum;t++)
 		{
 			smallDistanceImageYArr.push(200 + t*c.height/picYNum);
@@ -68,38 +86,27 @@ $(document).ready(function () {
 		
 	}
 	function buildProgress(){
-
-			progress = document.createElement('div');
-			progress.id = "progress";
-			progress.style.width = progressDiam + "px";
-	    	progress.style.height = progressDiam + "px";
-	    	progress.style.lineHeight = progressDiam + "px";
-	    	progress.style.textAlign = "center";
-	    	progress.style.color = progressFgColor;
-	    	progress.style.backgroundColor = progressBgColor;
-	    	progress.style.borderRadius = progressDiam / 2 + "px";
-	    	progress.style.position = "fixed";
-	    	progress.style.left = "50%";
-	    	progress.style.top = "10%";
-	    	progress.style.marginTop = - progressDiam / 2 + "px";
-	    	progress.style.marginLeft = - progressDiam / 2 + "px";
-	    	progress.style.fontFamily = progressFontFamily;
-	    	progress.style.fontSize = progressFontSize;
-	    	progress.style.zIndex = 1000;
-	    	progress.update = function(message,num,totalnum){
-	    		
-				progress.innerHTML = message + Math.floor(num/totalnum*100) + "%";
-				
-	    	};
-			document.body.appendChild(progress);
+			var progressbar = $( "#progress" ),
+      		progressLabel = $( ".progress-label" );
+			$('#progress').height(30);
+			progressbar.progressbar({
+		      value: false,
+		      change: function() {
+		        progressLabel.text( progressbar.progressbar( "value" ) + "%" );
+		      },
+		      complete: function() {
+		        progressLabel.text( "Complete!" );
+		      }
+		    });
+			
 		}
 	function loadFirstImage()
 	{
 		var img = new Image();
-		img.width = 1000;
-		img.height = 1000;
+		img.width = 600;
+		img.height = 600;
 		img.listId = currentFirstRNum;
-		img.src = reimgFolder+ "/0_0.jpg";
+		img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "/0_0.jpg";
 		
 		img.onload = function(){
 			imgReList[currentFirstRNum] = img;
@@ -114,8 +121,9 @@ $(document).ready(function () {
 					if(data!="skip")
 					{
 						firstRoundNum = data;
-					
-						if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
+						//progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
+						progressLabel.text( progressbar.progressbar(Math.floor(currentFirstRNum/firstRoundNum*100)) + "%" );
+						//if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
 
 						loadFirstRound(0);
 					}
@@ -138,43 +146,45 @@ $(document).ready(function () {
 			for(var j=0;j<50;j++)
 			{
 				var img = new Image();
-				img.width = 1000;
-				img.height = 1000;
+				img.width = 600;
+				img.height = 60;
 				img.listId = 50*i + j;
-				img.src = "resizeImages/" + i + "_" + j + ".jpg";
+				img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + i + "_" + j + ".jpg";
 				img.onload = function(){
 					if(this.listId != 449)
 					{
 						imgReList[this.listId] = this;
-						if (progress) progress.update("低精图加载：",this.listId,449);
+
+						progressLabel.text( progressbar.progressbar(Math.floor(this.listId/449*100)) + "%" );
 					}
 					else
 					{
-						var t;
-						var k;
-						for(t=0;t<9;t++)
-						{
-							for(k=0;k<50;k++)
-							{
-								var img = new Image();
-								img.width = 1000;
-								img.height = 1000;
-								img.src = "images/" + t + "_" + k + ".jpg";
-								img.listId = 50*t + k;
-								img.onload = function(){
+						$('#progress').hide();
+						// var t;
+						// var k;
+						// for(t=0;t<9;t++)
+						// {
+						// 	for(k=0;k<50;k++)
+						// 	{
+						// 		var img = new Image();
+						// 		img.width = 600;
+						// 		img.height = 600;
+						// 		img.src = "images/" + t + "_" + k + ".jpg";
+						// 		img.listId = 50*t + k;
+						// 		img.onload = function(){
 									
-									imgReList[this.listId]= this;
-									if (progress) progress.update("高精图加载：",this.listId,imgReList.length);
+						// 			imgReList[this.listId]= this;
+						// 			if (progress) progress.update("高精图加载：",this.listId,imgReList.length);
 									
 
-								};
+						// 		};
 								
-							}
-						}
-						if (progress) {
-										document.body.removeChild(progress);
-										progress = null;
-									}
+						// 	}
+						// }
+						// if (progress) {
+						// 				document.body.removeChild(progress);
+						// 				progress = null;
+						// 			}
 						
 						
 					}
@@ -194,8 +204,8 @@ $(document).ready(function () {
 		{		
 
 			var img = new Image();
-			img.width = 1000;
-			img.height = 1000;
+			img.width = 600;
+			img.height = 600;
 			img.listId = currentFirstRNum;
 			
 			img.src = reimgFolder+ "/0_" + currentFirstRNum + ".jpg";
@@ -261,8 +271,8 @@ $(document).ready(function () {
 		if (currentSecondRNum < SecondRoundNum) 
 		{		
 			var img = new Image();
-			img.width = 1000;
-			img.height = 1000;
+			img.width = 600;
+			img.height = 600;
 			img.listId = currentFirstRNum + currentSecondRNum;
 			if(SecondRoundPicY<9)
 				img.src = reimgFolder+ "/" + SecondRoundPicY + "_" + SecondRoundPicX + ".jpg";
@@ -329,15 +339,15 @@ $(document).ready(function () {
 	// 	stop();
 	// 	config.playMode = mode;
 	// }
+
 	
 	function play()
 	{
 		stop();
-		c.addEventListener('mousemove', onMouseMove, false);
-		c.addEventListener('mousedown', onMouseDown, false);
-		c.addEventListener('mouseup', onMouseUp, false);
-		document.addEventListener('mouseover',function(){ready= false;});
-		c.ontouchmove = function(e){
+		document.addEventListener('mousemove', onMouseMove, false);
+		document.addEventListener('mousedown', onMouseDown, false);
+		document.addEventListener('mouseup', onMouseUp, false);
+		document.ontouchmove = function(e){
 			onMouseMove(e.touches[0]);
 			return false;
 		};
@@ -346,9 +356,9 @@ $(document).ready(function () {
 
 	function stop()
 	{
-		c.removeEventListener('mousemove', onMouseMove, true);
-		c.removeEventListener('mousedown', onMouseDown, true);
-		c.removeEventListener('mouseup', onMouseUp, true);
+		document.removeEventListener('mousemove', onMouseMove, true);
+		document.removeEventListener('mousedown', onMouseDown, true);
+		document.removeEventListener('mouseup', onMouseUp, true);
 		if (playInterval) {
 			clearInterval(playInterval);
 			playInterval = null;
@@ -358,66 +368,104 @@ $(document).ready(function () {
 	{
 		ready = false;
 	}
+	
 	function onMouseDown(e)
 	{
 		ready = true;
-	}
-	function onMouseMove(e)
-	{
-		e = e || windows.event;
+
 		e.preventDefault();
-		if(ready)
-		{
+		mouseStartXposition = e.pageX;
+	}
+	function refresh () {
 
-			mouseXposition = e.clientX;
-			mouseYposition = e.clientY;
-			var i;
+		if (ticker === 0) {
+
+			ticker = self.setInterval(render, Math.round(1000 / 60));
+		}
+	}
+	function render()
+	{
+		if(currentCol !== endCol)
+		{	
+			var frameEasing = endCol < currentCol ? Math.floor((endCol - currentCol) * 0.1) : Math.ceil((endCol - currentCol) * 0.1);
 			
-			
-			for(i=0;i<smallDistanceImageXArr.length;i++)
-				{
-					if(i+1<smallDistanceImageXArr.length)
-					{
-						if(mouseXposition > smallDistanceImageXArr[i] && mouseXposition< smallDistanceImageXArr[i+1])
-						{
+			currentCol += frameEasing;
 
-							indx = i;
-						}
-					}
-
-				}
-				
-			for(i=0;i<smallDistanceImageYArr.length;i++)
-				{
-					if(i+1<smallDistanceImageYArr.length)
-					{
-						if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
-						{
-							indy = i;
-						}
-
-					}
-				}
-			// if(mouseXposition < 0 )
-			// {
-			// 	indx = 0;
-			// }
-			// if(mouseXposition > smallDistanceImageXArr[length-1])
-			// {
-			// 	indx = smallDistanceImageXArr[length-1];
-			// }
-			// if(mouseYposition < 0 )
-			// {
-			// 	indy = 0;
-			// }
-			// if(mouseYposition > smallDistanceImageYArr[length-1])
-			// {
-			// 	indy = smallDistanceImageYArr[length-1];
-			// }		
+			indx = getNormalizedCurrentFrame();
 
 			showImage(indx + indy * 50);
 			
+		} else {
+					
+			window.clearInterval(ticker);
+			ticker = 0;
 		}
+	}
+	function getNormalizedCurrentFrame() {
+		var c = -Math.ceil(currentCol % totalCols);
+		if (c < 0) c += (totalCols - 1);
+		return c;
+	}
+	function trackPointer(e) {
+		if(ready)
+		{
+
+			mouseEndXposition = e.pageX;
+			mouseYposition = e.clientY;
+			
+			if(monitorStartTime < new Date().getTime() - monitorInt) {
+				var i;
+					for(i=0;i<smallDistanceImageYArr.length;i++)
+					{
+						if(i+1<smallDistanceImageYArr.length)
+						{
+							if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
+							{
+								indy = i;
+							}
+
+						}
+					}
+
+				deltaX = mouseEndXposition - mouseStartXposition;
+				
+				endCol = currentCol + Math.ceil((totalCols - 1) * speedMultiplier * (deltaX / document.body.clientWidth));
+
+				refresh();
+
+				
+				
+
+				monitorStartTime = new Date().getTime();
+				
+				mouseStartXposition = e.pageX;
+
+				
+			}
+	
+			
+			// for(i=0;i<smallDistanceImageXArr.length;i++)
+			// 	{
+			// 		if(i+1<smallDistanceImageXArr.length)
+			// 		{
+			// 			if(mouseXposition > smallDistanceImageXArr[i] && mouseXposition< smallDistanceImageXArr[i+1])
+			// 			{
+
+			// 				indx = i;
+			// 			}
+			// 		}
+
+			// 	}
+			
+			
+		}
+	}
+	function onMouseMove(e)
+	{
+		
+		e.preventDefault();
+		trackPointer(e);
+		
 		
 	}
 
@@ -425,7 +473,7 @@ $(document).ready(function () {
 	{
 		if (id >= 0 && id < imgReList.length){
 			var img = imgReList[id];
-			console.log(imgReList[id].src);
+			console.log(id);
 			ctx.width = img.width;
 			ctx.height = img.height;
 			ctx.drawImage(img, 0, 0);
