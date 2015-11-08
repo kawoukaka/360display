@@ -43,7 +43,9 @@ $(document).ready(function () {
 		cloudURLUserPath="v1446938651/test/",
 		urlParameters_small="c_scale,q_80,w_600/",
 
-		mprogress,
+		progressbar = $( "#progress" ),
+      	progressLabel = $( ".progress-label" ),
+
 		progressDiam		="110",		// progress diameter
 		progressFontFamily	="Helvetica, Arial, sans-serif",
 		progressFontSize	= "0.7em",
@@ -86,8 +88,7 @@ $(document).ready(function () {
 		
 	}
 	function buildProgress(){
-			var progressbar = $( "#progress" ),
-      		progressLabel = $( ".progress-label" );
+			
 			$('#progress').height(30);
 			progressbar.progressbar({
 		      value: false,
@@ -114,29 +115,29 @@ $(document).ready(function () {
 			ctx.height = img.height;
 			ctx.drawImage(img, 0, 0);
 
-			$.ajax({ url: 'compressingFirstGroup.php',
-				type: 'post',
-				success: function(data) {
+			// $.ajax({ url: 'compressingFirstGroup.php',
+			// 	type: 'post',
+			// 	success: function(data) {
 				
-					if(data!="skip")
-					{
-						firstRoundNum = data;
-						//progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
-						progressLabel.text( progressbar.progressbar(Math.floor(currentFirstRNum/firstRoundNum*100)) + "%" );
-						//if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
+			// 		if(data!="skip")
+			// 		{
+			// 			firstRoundNum = data;
+			// 			//progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
+			// 			progressLabel.text( progressbar.progressbar(Math.floor(currentFirstRNum/firstRoundNum*100)) + "%" );
+			// 			//if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
 
 						loadFirstRound(0);
-					}
-					else
-					{
-						loadAllReImages();
-					}
+			// 		}
+			// 		else
+			// 		{
+						
+				// 	}
 
 
 					
-				}
+				// }
 				
-			});
+			//});
 		};
 	}
 	function loadAllReImages()
@@ -155,7 +156,7 @@ $(document).ready(function () {
 					{
 						imgReList[this.listId] = this;
 
-						progressLabel.text( progressbar.progressbar(Math.floor(this.listId/449*100)) + "%" );
+						progressLabel.text( Math.floor(this.listId/449*100) + "%" );
 					}
 					else
 					{
@@ -208,11 +209,11 @@ $(document).ready(function () {
 			img.height = 600;
 			img.listId = currentFirstRNum;
 			
-			img.src = reimgFolder+ "/0_" + currentFirstRNum + ".jpg";
+			img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "/0_" + currentFirstRNum + ".jpg";
 			
 			img.onload = function(){
 				imgReList[this.listId] = this;
-				if (progress) progress.update("第一段加载：",currentFirstRNum,firstRoundNum);
+				progressLabel.text( Math.floor(currentFirstRNum/firstRoundNum) + "%" );
 				loadFirstRound(roundNum);
 
 				play();
@@ -223,24 +224,22 @@ $(document).ready(function () {
 
 			};		
 		} else if (currentFirstRNum == firstRoundNum){ 
-			$.ajax({ url: 'compressingSecondGroup.php',
-					type: 'post',
-					success: function(data) {
-							if(data!="skip")
-							{
-								var picX= data.substr(2,data.length-2);
-								var picY = data.substr(0,1);
-								SecondRoundNum = picX * picY;
+			// $.ajax({ url: 'compressingSecondGroup.php',
+			// 		type: 'post',
+			// 		success: function(data) {
+			// 				if(data!="skip")
+			// 				{
+			// 					var picX= data.substr(2,data.length-2);
+			// 					var picY = data.substr(0,1);
+			// 					SecondRoundNum = picX * picY;
 
-								loadSecondRound(0);
-							}
-							else
-							{
+			// 					loadSecondRound(0);
+			// 				}
+			// 				else
+			// 				{
 								loadSecondRound(400);
-							}
-						}
-					});
-			
+							// }
+						}			
 
 			currentFirstRNum = firstRoundNum - 1;	
 			
@@ -473,7 +472,7 @@ $(document).ready(function () {
 	{
 		if (id >= 0 && id < imgReList.length){
 			var img = imgReList[id];
-			console.log(id);
+
 			ctx.width = img.width;
 			ctx.height = img.height;
 			ctx.drawImage(img, 0, 0);
