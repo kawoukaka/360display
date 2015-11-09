@@ -1,4 +1,50 @@
+@media	screen and (max-device-width: 1024px) and (orientation:portrait) {
+	#myCanvas {
+		max-width: 100%;
+        height: auto;
 
+	}
+	.ui-widget-header{
+		max-width: 100%;
+	}
+	.progress-label {
+	 	max-width: 100%;
+	 }
+}
+/*
+	Defines the criteria of the max. 480px wide mobiles' landscape mode and sets the image slider dimensions and centering according to it.
+*/
+@media	screen and (max-device-width: 480px) and (orientation:landscape),
+				screen and (-webkit-min-device-pixel-ratio: 2) and (orientation:landscape) {
+	#myCanvas{
+		max-width: 100%;
+        height: auto;
+
+	}
+	.ui-widget-header{
+		max-width: 100%;
+	}
+	.progress-label {
+	 	max-width: 100%;
+	 }
+}
+/*
+	Defines the criteria of the max. 480px wide mobiles' portrait mode and sets the image slider dimensions and centering according to it.
+*/
+@media	screen and (max-device-width: 480px) and (orientation:portrait),
+				screen and (-webkit-min-device-pixel-ratio: 2) and (orientation:portrait) {
+	#myCanvas {
+		max-width: 100%;
+        height: auto;
+
+	}
+	.ui-widget-header{
+		max-width: 100%;
+	}
+	 .progress-label {
+	 	max-width: 100%;
+	 }
+}
 .ui-widget-header {
         background-image: none !important;
         background-color: #0099FF !important;

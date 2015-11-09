@@ -443,10 +443,10 @@ $(document).ready(function () {
 	
 	function onMouseDown(e)
 	{
-		
+		e.preventDefault();
 		mouseStartXposition = getPointerEvent(e).pageX;
 		mouseStartYposition = getPointerEvent(e).pageY;
-		e.preventDefault();
+		
 		ready = true;
 	}
 	function refresh () {
