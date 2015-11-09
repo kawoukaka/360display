@@ -393,10 +393,10 @@ $(document).ready(function () {
 		document.addEventListener('mousemove', onMouseMove, false);
 		document.addEventListener('mousedown', onMouseDown, false);
 		document.addEventListener('mouseup', onMouseUp, false);
-		document.ontouchmove = function(e){
-			onMouseMove(e.touches[0]);
-			return false;
-		};
+		document.addEventListener('touchstart', onTouchStart, false);
+		document.addEventListener('touchmove', onTouchMove, false);
+		document.addEventListener('touchend', onTouchEnd, false);
+		
 
 	}	
 
@@ -405,11 +405,37 @@ $(document).ready(function () {
 		document.removeEventListener('mousemove', onMouseMove, true);
 		document.removeEventListener('mousedown', onMouseDown, true);
 		document.removeEventListener('mouseup', onMouseUp, true);
+		document.removeEventListener('touchstart', onTouchStart, true);
+		document.removeEventListener('touchmove', onTouchMove, true);
+		document.removeEventListener('touchend', onTouchEnd, true);
 		if (playInterval) {
 			clearInterval(playInterval);
 			playInterval = null;
 		}
 	}
+	function getPointerEvent(e) {
+		return e.touches ? e.touches[0] : e;
+	};
+	function onTouchStart(e){
+		
+		e.preventDefault();
+		mouseStartXposition = getPointerEvent(e).pageX;
+		mouseStartYposition = getPointerEvent(e).pageY;
+		ready = true;
+	}
+	
+	
+	function onTouchMove(e){
+		e.preventDefault();
+		trackPointer(e);
+	}
+	
+	
+	function onTouchEnd(e){
+		e.preventDefault();
+		ready = false;
+	}
+
 	function onMouseUp(e)
 	{
 		ready = false;
@@ -417,11 +443,11 @@ $(document).ready(function () {
 	
 	function onMouseDown(e)
 	{
-		ready = true;
-
+		
+		mouseStartXposition = getPointerEvent(e).pageX;
+		mouseStartYposition = getPointerEvent(e).pageY;
 		e.preventDefault();
-		mouseStartXposition = e.pageX;
-		mouseStartYposition = e.pageY;
+		ready = true;
 	}
 	function refresh () {
 
@@ -458,9 +484,9 @@ $(document).ready(function () {
 		if(ready)
 		{
 			var nddY,angle;
-			mouseEndXposition = e.pageX;
+			mouseEndXposition = getPointerEvent(e).pageX;
 			
-			mouseEndYposition = e.pageY;
+			mouseEndYposition = getPointerEvent(e).pageY;
 			
 			if(monitorStartTime < new Date().getTime() - monitorInt) {
 				// var i;
@@ -499,8 +525,8 @@ $(document).ready(function () {
 				showImage(indx + indy * 50);
 				monitorStartTime = new Date().getTime();
 				
-				mouseStartXposition = e.pageX;
-				mouseStartYposition = e.pageY;
+				mouseStartXposition = getPointerEvent(e).pageX;
+				mouseStartYposition = getPointerEvent(e).pageY;
 				
 			}
 	
