@@ -1,8 +1,10 @@
 
 .ui-widget-header {
-            background: #0099FF;
-            font-weight: bold;
-         }
+        background-image: none !important;
+        background-color: #0099FF !important;
+
+　		margin-top: -30px;
+    }
   .progress-label {
     position: absolute;
     left: 50%;
@@ -18,4 +20,48 @@
     margin-right: auto;
     display: block;
     width: 600px;
+}
+#leftArrow{
+position: absolute;
+
+margin-left:50px;
+width: 0;
+height: 0;
+border-style: solid;
+border-width: 25px 50px 25px 0;
+border-color: transparent #0099ff transparent transparent;
+}
+#rightArrow{
+position: absolute;
+
+margin-left:150px;
+width: 0;
+height: 0;
+border-style: solid;
+border-width: 25px 0 25px 50px;
+border-color: transparent transparent transparent #0099ff;
+}
+#upArrow{
+position: absolute;
+margin-top:-50px;
+margin-left:100px;
+width: 0;
+height: 0;
+border-style: solid;
+border-width: 0 25px 50px 25px;
+border-color: transparent transparent #0099ff transparent;
+
+}
+
+#downArrow{
+	position: absolute;
+margin-top:50px;
+margin-left:100px;
+width: 0;
+height: 0;
+border-style: solid;
+border-width: 50px 25px 0 25px;
+border-color: #0099ff transparent transparent transparent;
+
+
 }

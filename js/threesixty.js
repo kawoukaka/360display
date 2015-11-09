@@ -25,19 +25,24 @@ $(document).ready(function () {
 		playInterval = 20,
 		ready,
 		deltaX = 0,
+		deltaY = 0,
 		monitorStartTime = 0,
 		monitorInt = 10,
 		ticker = 0,
 		speedMultiplier = 5,
-		monitorStartTime = 0,
 		mouseStartXposition,
 		mouseSEndXposition,
-		mouseYposition,
+		mouseStartYposition,
+		mouseSEndYposition,
 		indx=0,
 		indy=0,
 		endCol=0,
 		currentCol=0,
 		totalCols = 0,
+		endRow=0,
+		currentRow=0,
+		totalRows = 0,
+
 
 		cloudURLPath="http://res.cloudinary.com/diiseuaat/image/upload/",
 		cloudURLUserPath="v1446938651/test/",
@@ -60,19 +65,23 @@ $(document).ready(function () {
 	function init(_picXNum,_picYNum,_folder,_refolder)
 	{
 		totalCols = _picXNum;
+		totalRows = _picYNum;
 		picXNum = _picXNum;
 		picYNum = _picYNum;
 		imgFolder= _folder;
 		reimgFolder=_refolder;
 		c = document.getElementById('myCanvas');
 		ctx = c.getContext('2d');
-		document.body.appendChild(c);
+		//document.body.appendChild(c);
 		document.body.style.margin ="0";
 		document.body.style.padding ="0";
 		document.body.style.overflow = "hidden"; //canvas is a few pixels taller than innerHeight… (?)			
 		
 		var t;
-		
+		$('#leftArrow').hide();
+		$('#rightArrow').hide();
+		$('#upArrow').hide();
+		$('#downArrow').hide();
 		buildProgress();
 
 		// for(t=0;t<picXNum;t++)
@@ -88,7 +97,6 @@ $(document).ready(function () {
 		
 	}
 	function buildProgress(){
-			
 			$('#progress').height(30);
 			progressbar.progressbar({
 		      value: false,
@@ -125,8 +133,10 @@ $(document).ready(function () {
 			// 			//progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
 			// 			progressLabel.text( progressbar.progressbar(Math.floor(currentFirstRNum/firstRoundNum*100)) + "%" );
 			// 			//if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
+		$('#leftArrow').show();
+		$('#rightArrow').show();
 
-						loadFirstRound(0);
+			loadFirstRound(50);
 			// 		}
 			// 		else
 			// 		{
@@ -194,7 +204,8 @@ $(document).ready(function () {
 			}
 		}
 	}
-	function loadFirstRound(roundNum){
+	function loadFirstRound(roundNum)
+	{
 		if(roundNum!=0)
 		{
 			firstRoundNum=roundNum;
@@ -209,21 +220,23 @@ $(document).ready(function () {
 			img.height = 600;
 			img.listId = currentFirstRNum;
 			
-			img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "/0_" + currentFirstRNum + ".jpg";
+			img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "0_" + currentFirstRNum + ".jpg";
 			
 			img.onload = function(){
 				imgReList[this.listId] = this;
-				progressLabel.text( Math.floor(currentFirstRNum/firstRoundNum) + "%" );
+				progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
+				progressLabel.text("第一圈加载：" +  Math.floor(currentFirstRNum/firstRoundNum*100) + "%" );
 				loadFirstRound(roundNum);
-
-				play();
 				
 				
-
+				ctx.width = this.width;
+				ctx.height = this.height;
+				ctx.drawImage(this, 0, 0);
 				
-
 			};		
 		} else if (currentFirstRNum == firstRoundNum){ 
+			
+			progressbar.progressbar( "value",0);
 			// $.ajax({ url: 'compressingSecondGroup.php',
 			// 		type: 'post',
 			// 		success: function(data) {
@@ -237,9 +250,40 @@ $(document).ready(function () {
 			// 				}
 			// 				else
 			// 				{
-								loadSecondRound(400);
+				play();
+				//loadSecondRound(400);
 							// }
-						}			
+		$('#upArrow').show();
+		$('#downArrow').show();
+			for(var i=1;i<9;i++)
+			{
+				for(var j=0;j<50;j++)
+				{
+					var img = new Image();
+					img.width = 600;
+					img.height = 600;
+					img.listId = 50*i + j;
+					img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + i + "_" + j + ".jpg";
+					img.onload = function(){
+						if(this.listId != 399)
+						{
+							imgReList[this.listId] = this;
+							progressbar.progressbar( "value", Math.floor(this.listId/399*100));
+							progressLabel.text("其余图片的加载：" +  Math.floor(this.listId/399*100) + "%" );
+						}
+						else
+						{
+							progressbar.hide()
+							progressbar.progressbar( "value",0);
+							$('#leftArrow').hide();
+							$('#rightArrow').hide();
+							$('#upArrow').hide();
+							$('#downArrow').hide();
+						}
+						
+					}
+				}
+			}
 
 			currentFirstRNum = firstRoundNum - 1;	
 			
@@ -274,31 +318,34 @@ $(document).ready(function () {
 			img.height = 600;
 			img.listId = currentFirstRNum + currentSecondRNum;
 			if(SecondRoundPicY<9)
-				img.src = reimgFolder+ "/" + SecondRoundPicY + "_" + SecondRoundPicX + ".jpg";
+				img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + SecondRoundPicY + "_" + SecondRoundPicX + ".jpg";
 			
 			img.onload = function(){
 				imgReList[this.listId] = this;
 
 				loadSecondRound(roundNum);
 				//play();
-				if (progress) progress.update("第二段加载：",parseInt(currentFirstRNum) + parseInt(currentSecondRNum),parseInt(firstRoundNum) + parseInt(SecondRoundNum));
+				progressbar.progressbar( "value", Math.floor(parseInt(currentSecondRNum)/parseInt(SecondRoundNum)*100));
+				progressLabel.text( Math.floor(parseInt(currentSecondRNum)/parseInt(SecondRoundNum)*100) + "%" );
+				//if (progress) progress.update("第二段加载：",parseInt(currentFirstRNum) + parseInt(currentSecondRNum),parseInt(firstRoundNum) + parseInt(SecondRoundNum));
 				
 			};		
 		} else if (currentSecondRNum == SecondRoundNum){ 
 
-			
+			progressbar.hide()
+			progressbar.progressbar( "value",0);
 			//currentSecondRNum = SecondRoundNum - 1;	
 
 			
-			var i;
-			var j;
-			for(i=0;i<9;i++)
-			{
-				for(j=0;j<50;j++)
-				{
-					loadNext(i,j);
-				}
-			}
+			// var i;
+			// var j;
+			// for(i=0;i<9;i++)
+			// {
+			// 	for(j=0;j<50;j++)
+			// 	{
+			// 		loadNext(i,j);
+			// 	}
+			// }
 			
 		}	
 	}
@@ -374,6 +421,7 @@ $(document).ready(function () {
 
 		e.preventDefault();
 		mouseStartXposition = e.pageX;
+		mouseStartYposition = e.pageY;
 	}
 	function refresh () {
 
@@ -386,11 +434,11 @@ $(document).ready(function () {
 	{
 		if(currentCol !== endCol)
 		{	
-			var frameEasing = endCol < currentCol ? Math.floor((endCol - currentCol) * 0.1) : Math.ceil((endCol - currentCol) * 0.1);
+			var frameEasingX = endCol < currentCol ? Math.floor((endCol - currentCol) * 0.1) : Math.ceil((endCol - currentCol) * 0.1);
 			
-			currentCol += frameEasing;
-
-			indx = getNormalizedCurrentFrame();
+			currentCol += frameEasingX;
+			
+			indx = getNormalizedCurrentXFrame();
 
 			showImage(indx + indy * 50);
 			
@@ -400,45 +448,59 @@ $(document).ready(function () {
 			ticker = 0;
 		}
 	}
-	function getNormalizedCurrentFrame() {
+	function getNormalizedCurrentXFrame() {
 		var c = -Math.ceil(currentCol % totalCols);
 		if (c < 0) c += (totalCols - 1);
 		return c;
 	}
+	
 	function trackPointer(e) {
 		if(ready)
 		{
-
+			var nddY,angle;
 			mouseEndXposition = e.pageX;
-			mouseYposition = e.clientY;
+			
+			mouseEndYposition = e.pageY;
 			
 			if(monitorStartTime < new Date().getTime() - monitorInt) {
-				var i;
-					for(i=0;i<smallDistanceImageYArr.length;i++)
-					{
-						if(i+1<smallDistanceImageYArr.length)
-						{
-							if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
-							{
-								indy = i;
-							}
+				// var i;
+				// 	for(i=0;i<smallDistanceImageYArr.length;i++)
+				// 	{
+				// 		if(i+1<smallDistanceImageYArr.length)
+				// 		{
+				// 			if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
+				// 			{
+				// 				indy = i;
+				// 			}
 
-						}
-					}
+				// 		}
+				// 	}
 
 				deltaX = mouseEndXposition - mouseStartXposition;
-				
+				deltaY = mouseEndYposition - mouseStartYposition;
+
 				endCol = currentCol + Math.ceil((totalCols - 1) * speedMultiplier * (deltaX / document.body.clientWidth));
 
+				nddY = deltaY / 600;
+
+				angle = Math.PI / 2;
+
+			    var sn = Math.sin(angle);
+			    var cs = Math.cos(angle);
+			    var y = nddY * sn + nddY * cs;
+			    currentRow += totalRows * y;
+			   
+
+			  	indy = Math.floor(Math.min(currentRow, picYNum));
+			    indy = Math.floor(Math.max(currentRow, 0));
+			    
 				refresh();
-
 				
-				
-
+				showImage(indx + indy * 50);
 				monitorStartTime = new Date().getTime();
 				
 				mouseStartXposition = e.pageX;
-
+				mouseStartYposition = e.pageY;
 				
 			}
 	
@@ -470,16 +532,16 @@ $(document).ready(function () {
 
 	function showImage(id)
 	{
-		if (id >= 0 && id < imgReList.length){
-			var img = imgReList[id];
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> origin/master
-			ctx.width = img.width;
-			ctx.height = img.height;
-			ctx.drawImage(img, 0, 0);
+		if (id >= 0 && id < imgReList.length){
+				var img = imgReList[id];
+				if(img && img.complete !== false)
+				{
+					ctx.clearRect(0, 0, img.width, img.height);
+					ctx.width = img.width;
+					ctx.height = img.height;
+					ctx.drawImage(img, 0, 0);
+				}
 		}
 		
 	}
