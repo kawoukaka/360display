@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html data-type="example" data-id="sequence-multi-row">
+  <head>
+    <title>360</title>
+    <meta charset='utf-8' content='text/html' http-equiv='Content-type' />
+
+    <script src='http://code.jquery.com/jquery-1.9.1.min.js' type='text/javascript'></script>
+    <script src='http://code.vostrel.cz/jquery.reel.js' type='text/javascript'></script>
+
+    <!-- Common examples style (gray background, thin fonts etc.) -->
+     <link rel="stylesheet" href="css/reset.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="css/threesixty.css" media="screen" type="text/css" />
+  </head>
+  <body>
+
+  <div id="threesixty">
+    <img id="image" src="image.jpg" width="1000" height="1000" />
+  </div>
+    <script>
+      $('#image').reel({
+        images:      'images2/###.jpg',
+        steppable:   false,
+        frames:      50,
+        rows:        9,
+        row:         3,
+        speed:       0.4,
+        annotations: {
+          "first_row": {
+            node: { text: 'First Row', css: { width: 100 } },
+            start: 1,
+            end: 20,
+            x: [ 10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105 ],
+            y: 10
+          },
+          "last_row": {
+            node: { text: 'Last Row', css: { width: 100 } },
+            start: 101,
+            end: 120,
+            x: [ 105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10 ],
+            y: 175
+          }
+        }
+      });
+    </script>
+
+ 
+
+   
+    <script> $.reel.def.indicator = 5; </script>
+
+ 
+  </body>
+</html>
+

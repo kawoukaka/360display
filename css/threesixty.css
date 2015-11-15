@@ -58,6 +58,20 @@
     font-weight: bold;
     text-shadow: 1px 1px 0 #fff;
   }
+
+ #setting{
+ 	left:100px;
+ 	top:50px;
+ 	position: absolute;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#numImages{
+	width:100px;
+}
 #myCanvas {
 	top:50%;
     padding-left: 0;

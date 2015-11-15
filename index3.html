@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+    <title>360</title>
+    <link rel="stylesheet" href="css/reset.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="css/threesixty.css" media="screen" type="text/css" />
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="js/spritespin.js"></script>
+</head>
+<body>
+    <div id="SpriteSpin"></div>
+
+   <script>
+    $('#SpriteSpin').spritespin({
+      // fill source array using a helper function
+      source: SpriteSpin.sourceArray('images3/{lane}_{frame}.jpg', {
+      lane: [0,8],
+      frame: [0,49],
+      digits: 2
+      }),
+      width: 1000,
+      height: 1000,
+      frames: 50,
+      lanes: 9,
+      sense: 1,
+      senseLane: -2,
+      mods: ['360', 'zoom', 'drag']
+    });
+   </script>
+    
+</body>
+</html>

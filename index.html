@@ -10,16 +10,37 @@
     <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
 </head>
 <body>
-    
-    <div id="progress"><div class="progress-label">Loading...</div></div>
+<form id="setting">
+<div>每个角度的图片数量：</div>
+<select id="numImages">
+  <option value="25">25张图</option>
+  <option value="50">50张图</option>
+  <option value="12">12张图</option>
+  <option value="36">36张图</option>
+</select>
+<div>角度：</div>
+<input type="checkbox" id="numLane1" value="0" checked="checked">1号角度<br>
+<input type="checkbox" id="numLane2" value="1">2号角度<br>
+<input type="checkbox" id="numLane3" value="2">3号角度<br>
+<input type="checkbox" id="numLane4" value="3">4号角度<br>
+<input type="checkbox" id="numLane5" value="4">5号角度<br>
+<input type="checkbox" id="numLane6" value="5">6号角度<br>
+<input type="checkbox" id="numLane7" value="6">7号角度<br>
+<input type="checkbox" id="numLane8" value="7">8号角度<br>
+<input type="checkbox" id="numLane9" value="8">9号角度<br>
+<button type="button" id="apply">应用</button>
+<button type="reset" id="reset">重置</button>
+</form>
+    <div id="progress"><div class="progress-label"></div></div>
     
     <div id="threesixty">
         <canvas id="myCanvas" width="600" height="600" style="border:1px solid #d3d3d3;background:#ffffff;">
     </div>
-   <div id="upArrow"></div>
+  <!-- <div id="upArrow"></div>
     <div id="leftArrow"></div>
     <div id="rightArrow"></div>
-     <div id="downArrow"></div>
+     <div id="downArrow"></div>-->
+  
     <script src="js/jquery-1.11.0.min.js"></script>
      <script src="js/threesixty.js"></script>
      <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>

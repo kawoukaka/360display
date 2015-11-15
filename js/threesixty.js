@@ -7,21 +7,17 @@ $(document).ready(function () {
 		picYNum,
 		loadedpicX=0,
 		loadedpicY=0,
-		firstRoundNum = 0,
-		SecondRoundNum =0,
-		SecondRoundPicX = 0,
-		SecondRoundPicY = 0,
+
 		currentNum=0,
-		currentFirstRNum=0,
-		currentSecondRNum=0,
+
 		numberOfImg,
 		imgFolder,
-		reimgFolder,
+
 		progress,
-		imgList = [],
+
+		laneList = [],
 		imgReList = [],
-		smallDistanceImageXArr =[],
-		smallDistanceImageYArr =[],
+
 		playInterval = 20,
 		ready,
 		deltaX = 0,
@@ -42,11 +38,12 @@ $(document).ready(function () {
 		endRow=0,
 		currentRow=0,
 		totalRows = 0,
-
-
-		cloudURLPath="http://res.cloudinary.com/diiseuaat/image/upload/",
-		cloudURLUserPath="v1446938651/test/",
-		urlParameters_small="c_scale,q_80,w_600/",
+		timer,
+		countTime = 0,
+		totalSize = 0;
+		//cloudURLPath="http://res.cloudinary.com/diiseuaat/image/upload/",
+		//cloudURLUserPath="v1446938651/test/",
+		//urlParameters_small="c_scale,q_80,w_600/",
 
 		progressbar = $( "#progress" ),
       	progressLabel = $( ".progress-label" ),
@@ -60,44 +57,76 @@ $(document).ready(function () {
 		progressHeight		= "5px",		// if progressMode == "bar"
 		progressShowImages	= true;			// display images while loaded	
 	
-	init(50,9,"images","resizeImages");
-
-	function init(_picXNum,_picYNum,_folder,_refolder)
+	
+	initSetting();
+    
+	function initSetting()
 	{
-		totalCols = _picXNum;
-		totalRows = _picYNum;
-		picXNum = _picXNum;
-		picYNum = _picYNum;
+		timer=setTimeout(countDownloadTime(),1000);
+		$('#leftArrow').hide();
+		$('#rightArrow').hide();
+		$('#upArrow').hide();
+		$('#downArrow').hide();
+		
+	}
+	function getSizeOfImage(file)
+	{
+		var xhr = new XMLHttpRequest();
+		xhr.open('HEAD', file, true);
+		xhr.onreadystatechange = function(){
+		  if ( xhr.readyState == 4 ) {
+		    if ( xhr.status == 200 ) {
+		       totalSize += parseInt(xhr.getResponseHeader('Content-Length'));
+		      
+		    } else {
+		       console.log("error");
+		    }
+		  }
+		};
+		xhr.send(null);
+	}
+	function countDownloadTime()
+	{
+		countTime++;
+	}
+	$('#apply' ).click(function() {
+		
+		//progressbar.hide();
+		
+		totalCols = $("#numImages option:selected").val();
+		var i = 0;
+		$(':checkbox:checked').each(function(i){
+			laneList[i] = $(this).val();
+        });
+		totalRows = laneList.length;
+
+        init("images");
+    });
+    $('#reset' ).click(function() {
+    	location.reload();
+		
+    });
+	function init(_folder)
+	{
 		imgFolder= _folder;
-		reimgFolder=_refolder;
+
 		c = document.getElementById('myCanvas');
 		ctx = c.getContext('2d');
-		//document.body.appendChild(c);
+		
 		document.body.style.margin ="0";
 		document.body.style.padding ="0";
 		document.body.style.overflow = "hidden"; //canvas is a few pixels taller than innerHeight… (?)			
 		
-		var t;
 		$('#leftArrow').hide();
 		$('#rightArrow').hide();
 		$('#upArrow').hide();
 		$('#downArrow').hide();
 		buildProgress();
-
-		// for(t=0;t<picXNum;t++)
-		// {
-		// 	smallDistanceImageXArr.push(parseInt(c.getBoundingClientRect().left) + t*c.width/picXNum);
-		// }
-		for(t=0;t<picYNum;t++)
-		{
-			smallDistanceImageYArr.push(200 + t*c.height/picYNum);
-		}
 		
-		loadFirstImage();
-		
+		loadImages();
 	}
 	function buildProgress(){
-			$('#progress').height(30);
+			progressbar.height(30);
 			progressbar.progressbar({
 		      value: false,
 		      change: function() {
@@ -109,172 +138,33 @@ $(document).ready(function () {
 		    });
 			
 		}
-	function loadFirstImage()
+	function loadImages()
 	{
-		var img = new Image();
-		img.width = 600;
-		img.height = 600;
-		img.listId = currentFirstRNum;
-		img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "/0_0.jpg";
-		
-		img.onload = function(){
-			imgReList[currentFirstRNum] = img;
-			ctx.width = img.width;
-			ctx.height = img.height;
-			ctx.drawImage(img, 0, 0);
-
-			// $.ajax({ url: 'compressingFirstGroup.php',
-			// 	type: 'post',
-			// 	success: function(data) {
-				
-			// 		if(data!="skip")
-			// 		{
-			// 			firstRoundNum = data;
-			// 			//progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
-			// 			progressLabel.text( progressbar.progressbar(Math.floor(currentFirstRNum/firstRoundNum*100)) + "%" );
-			// 			//if (progress) progress.update("低精图加载：",currentFirstRNum,firstRoundNum);
-		$('#leftArrow').show();
-		$('#rightArrow').show();
-
-			loadFirstRound(50);
-			// 		}
-			// 		else
-			// 		{
-						
-				// 	}
-
-
-					
-				// }
-				
-			//});
-		};
-	}
-	function loadAllReImages()
-	{
-		for(var i=0;i<9;i++)
+		for(var i=0;i<totalRows;i++)
 		{
-			for(var j=0;j<50;j++)
-			{
-				var img = new Image();
-				img.width = 600;
-				img.height = 60;
-				img.listId = 50*i + j;
-				img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + i + "_" + j + ".jpg";
-				img.onload = function(){
-					if(this.listId != 449)
-					{
-						imgReList[this.listId] = this;
-
-						progressLabel.text( Math.floor(this.listId/449*100) + "%" );
-					}
-					else
-					{
-						$('#progress').hide();
-						// var t;
-						// var k;
-						// for(t=0;t<9;t++)
-						// {
-						// 	for(k=0;k<50;k++)
-						// 	{
-						// 		var img = new Image();
-						// 		img.width = 600;
-						// 		img.height = 600;
-						// 		img.src = "images/" + t + "_" + k + ".jpg";
-						// 		img.listId = 50*t + k;
-						// 		img.onload = function(){
-									
-						// 			imgReList[this.listId]= this;
-						// 			if (progress) progress.update("高精图加载：",this.listId,imgReList.length);
-									
-
-						// 		};
-								
-						// 	}
-						// }
-						// if (progress) {
-						// 				document.body.removeChild(progress);
-						// 				progress = null;
-						// 			}
-						
-						
-					}
-					play();
-				}
-			}
-		}
-	}
-	function loadFirstRound(roundNum)
-	{
-		if(roundNum!=0)
-		{
-			firstRoundNum=roundNum;
-		}
-		currentFirstRNum++;
-			
-		if (currentFirstRNum < firstRoundNum) 
-		{		
-
-			var img = new Image();
-			img.width = 600;
-			img.height = 600;
-			img.listId = currentFirstRNum;
-			
-			img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + "0_" + currentFirstRNum + ".jpg";
-			
-			img.onload = function(){
-				imgReList[this.listId] = this;
-				progressbar.progressbar( "value", Math.floor(currentFirstRNum/firstRoundNum*100));
-				progressLabel.text("第一圈加载：" +  Math.floor(currentFirstRNum/firstRoundNum*100) + "%" );
-				loadFirstRound(roundNum);
-				
-				
-				ctx.width = this.width;
-				ctx.height = this.height;
-				ctx.drawImage(this, 0, 0);
-				
-			};		
-		} else if (currentFirstRNum == firstRoundNum){ 
-			
-			progressbar.progressbar( "value",0);
-			// $.ajax({ url: 'compressingSecondGroup.php',
-			// 		type: 'post',
-			// 		success: function(data) {
-			// 				if(data!="skip")
-			// 				{
-			// 					var picX= data.substr(2,data.length-2);
-			// 					var picY = data.substr(0,1);
-			// 					SecondRoundNum = picX * picY;
-
-			// 					loadSecondRound(0);
-			// 				}
-			// 				else
-			// 				{
-				play();
-				//loadSecondRound(400);
-							// }
-		$('#upArrow').show();
-		$('#downArrow').show();
-			for(var i=1;i<9;i++)
-			{
-				for(var j=0;j<50;j++)
+				for(var j=0;j<totalCols;j++)
 				{
 					var img = new Image();
 					img.width = 600;
 					img.height = 600;
-					img.listId = 50*i + j;
-					img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + i + "_" + j + ".jpg";
+					img.listId = totalCols*i + j;
+					img.src = imgFolder + "/" + laneList[i] + "_" + j + ".jpg";
 					img.onload = function(){
-						if(this.listId != 399)
+						if(this.listId != (totalRows * totalCols -1))
 						{
 							imgReList[this.listId] = this;
-							progressbar.progressbar( "value", Math.floor(this.listId/399*100));
-							progressLabel.text("其余图片的加载：" +  Math.floor(this.listId/399*100) + "%" );
+							progressbar.progressbar( "value", Math.floor(this.listId/totalRows * totalCols*100));
+							progressLabel.text("加载了：" +  Math.floor(this.listId/totalRows * totalCols*100) + "%" );
+							getSizeOfImage(this.src);
+							console.log(this.listId,totalRows * totalCols);
 						}
 						else
 						{
-							progressbar.hide()
+							play();
+							clearTimeout(timer);
+							//progressbar.hide()
 							progressbar.progressbar( "value",0);
+							progressLabel.text("下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
 							$('#leftArrow').hide();
 							$('#rightArrow').hide();
 							$('#upArrow').hide();
@@ -284,108 +174,10 @@ $(document).ready(function () {
 					}
 				}
 			}
-
-			currentFirstRNum = firstRoundNum - 1;	
-			
-			
-		}	
-	}	
-	function loadSecondRound(roundNum){
-		
-		if(roundNum !=0)
-		{
-			SecondRoundNum = roundNum;
-		}	
-		if(SecondRoundPicY<9)
-		{
-
-			if(SecondRoundPicX<49)
-			{
-				SecondRoundPicX++;
-			}
-			else
-			{
-				SecondRoundPicX=0;
-				SecondRoundPicY++;
-			}
-		}
-		
-		currentSecondRNum++;
-		if (currentSecondRNum < SecondRoundNum) 
-		{		
-			var img = new Image();
-			img.width = 600;
-			img.height = 600;
-			img.listId = currentFirstRNum + currentSecondRNum;
-			if(SecondRoundPicY<9)
-				img.src = cloudURLPath + urlParameters_small + cloudURLUserPath + SecondRoundPicY + "_" + SecondRoundPicX + ".jpg";
-			
-			img.onload = function(){
-				imgReList[this.listId] = this;
-
-				loadSecondRound(roundNum);
-				//play();
-				progressbar.progressbar( "value", Math.floor(parseInt(currentSecondRNum)/parseInt(SecondRoundNum)*100));
-				progressLabel.text( Math.floor(parseInt(currentSecondRNum)/parseInt(SecondRoundNum)*100) + "%" );
-				//if (progress) progress.update("第二段加载：",parseInt(currentFirstRNum) + parseInt(currentSecondRNum),parseInt(firstRoundNum) + parseInt(SecondRoundNum));
-				
-			};		
-		} else if (currentSecondRNum == SecondRoundNum){ 
-
-			progressbar.hide()
-			progressbar.progressbar( "value",0);
-			//currentSecondRNum = SecondRoundNum - 1;	
-
-			
-			// var i;
-			// var j;
-			// for(i=0;i<9;i++)
-			// {
-			// 	for(j=0;j<50;j++)
-			// 	{
-			// 		loadNext(i,j);
-			// 	}
-			// }
-			
-		}	
 	}
-	function loadNext(loadedpicX,loadedpicY)
-	{
-		
-		
-		if (currentNum < (picXNum * picYNum)) 
-		{		
-			currentNum++;
-			var img = new Image();
-			
-			img.src = imgFolder+ "/" + loadedpicX + "_" + loadedpicY + ".jpg";
+	
 
-			img.onload = function(){
-				
-				if(currentNum<(picXNum * picYNum)) 
-					imgReList[currentNum].src = this.src;
-				
-				if (progress) progress.update("高精图加载：",currentNum,picXNum * picYNum);
-				
-
-			};		
-		} 
-		
-		if(currentNum == (picXNum * picYNum-1))
-		{
-			if (progress) {
-				document.body.removeChild(progress);
-				progress = null;
-			}
-		}
-
-	}
-
-	// function setPlayMode(mode){
-	// 	stop();
-	// 	config.playMode = mode;
-	// }
-
+	
 	
 	function play()
 	{
@@ -466,7 +258,7 @@ $(document).ready(function () {
 			
 			indx = getNormalizedCurrentXFrame();
 
-			showImage(indx + indy * 50);
+			showImage(indx + indy * totalCols);
 			
 		} else {
 					
@@ -489,18 +281,7 @@ $(document).ready(function () {
 			mouseEndYposition = getPointerEvent(e).pageY;
 			
 			if(monitorStartTime < new Date().getTime() - monitorInt) {
-				// var i;
-				// 	for(i=0;i<smallDistanceImageYArr.length;i++)
-				// 	{
-				// 		if(i+1<smallDistanceImageYArr.length)
-				// 		{
-				// 			if(mouseYposition > smallDistanceImageYArr[i] && mouseYposition< smallDistanceImageYArr[i+1])
-				// 			{
-				// 				indy = i;
-				// 			}
-
-				// 		}
-				// 	}
+				
 
 				deltaX = mouseEndXposition - mouseStartXposition;
 				deltaY = mouseEndYposition - mouseStartYposition;
@@ -517,12 +298,12 @@ $(document).ready(function () {
 			    currentRow += totalRows * y;
 			   
 
-			  	indy = Math.floor(Math.min(currentRow, picYNum));
+			  	indy = Math.floor(Math.min(currentRow, totalRows));
 			    indy = Math.floor(Math.max(currentRow, 0));
 			    
 				refresh();
 				
-				showImage(indx + indy * 50);
+				showImage(indx + indy * totalCols);
 				monitorStartTime = new Date().getTime();
 				
 				mouseStartXposition = getPointerEvent(e).pageX;
@@ -530,19 +311,6 @@ $(document).ready(function () {
 				
 			}
 	
-			
-			// for(i=0;i<smallDistanceImageXArr.length;i++)
-			// 	{
-			// 		if(i+1<smallDistanceImageXArr.length)
-			// 		{
-			// 			if(mouseXposition > smallDistanceImageXArr[i] && mouseXposition< smallDistanceImageXArr[i+1])
-			// 			{
-
-			// 				indx = i;
-			// 			}
-			// 		}
-
-			// 	}
 			
 			
 		}
