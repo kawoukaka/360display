@@ -150,13 +150,13 @@ $(document).ready(function () {
 					img.listId = totalCols*i + j;
 					img.src = imgFolder + "/" + laneList[i] + "_" + j + ".jpg";
 					img.onload = function(){
-						if(this.listId != (totalRows * totalCols -1))
+						if(this.listId+1 != (totalRows * totalCols))
 						{
 							imgReList[this.listId] = this;
-							progressbar.progressbar( "value", Math.floor(this.listId/totalRows * totalCols*100));
-							progressLabel.text("加载了：" +  Math.floor(this.listId/totalRows * totalCols*100) + "%" );
+							progressbar.progressbar( "value", Math.ceil((this.listId+1)/(totalRows * totalCols)*100));
+							progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%" );
 							getSizeOfImage(this.src);
-							console.log(this.listId,totalRows * totalCols);
+							//console.log(this.src,this.listId,totalRows * totalCols);
 						}
 						else
 						{
@@ -181,13 +181,13 @@ $(document).ready(function () {
 	
 	function play()
 	{
-		stop();
-		document.addEventListener('mousemove', onMouseMove, false);
-		document.addEventListener('mousedown', onMouseDown, false);
-		document.addEventListener('mouseup', onMouseUp, false);
-		document.addEventListener('touchstart', onTouchStart, false);
-		document.addEventListener('touchmove', onTouchMove, false);
-		document.addEventListener('touchend', onTouchEnd, false);
+		//stop();
+		document.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('mousedown', onMouseDown);
+		document.addEventListener('mouseup', onMouseUp);
+		document.addEventListener('touchstart', onTouchStart);
+		document.addEventListener('touchmove', onTouchMove);
+		document.addEventListener('touchend', onTouchEnd);
 		
 
 	}	
@@ -235,11 +235,12 @@ $(document).ready(function () {
 	
 	function onMouseDown(e)
 	{
+		ready = true;
 		e.preventDefault();
 		mouseStartXposition = getPointerEvent(e).pageX;
 		mouseStartYposition = getPointerEvent(e).pageY;
 		
-		ready = true;
+		console.log(mouseStartXposition);
 	}
 	function refresh () {
 
@@ -273,6 +274,7 @@ $(document).ready(function () {
 	}
 	
 	function trackPointer(e) {
+		console.log(ready);
 		if(ready)
 		{
 			var nddY,angle;
