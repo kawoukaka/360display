@@ -1401,7 +1401,7 @@ function View360Loader(sources) {
 
             };
 
-            this.images[i].src = this.directory + "/" + this.sources[i];
+            this.images[i].src = this.directory + "/" + this.sources[i] + "?d=" + new Date().getTime();
 
         }
 
