@@ -1337,12 +1337,12 @@ function View360Loader(sources) {
         var numImages = to-from  + 1
         var getSizeOfImage = function(file){
             var xhr = new XMLHttpRequest();
-            xhr.open('HEAD', file, true);
+            xhr.open('HEAD', file, false);
             xhr.onreadystatechange = function(){
               if ( xhr.readyState == 4 ) {
                 if ( xhr.status == 200 ) {
                    totalSize += parseInt(xhr.getResponseHeader('Content-Length'));
-                  
+                    console.log(file,totalSize);
                 } else {
                    console.log("error");
                 }
@@ -1350,6 +1350,7 @@ function View360Loader(sources) {
             };
             xhr.send(null);
         };
+
         for (var i=from; i<=to; i++) {
 
             this.images[i] = new Image();
