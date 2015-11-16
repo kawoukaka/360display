@@ -61,13 +61,25 @@ $(document).ready(function () {
 	initSetting();
     
 	function initSetting()
-	{
+	{	
 		timer=setTimeout(countDownloadTime(),1000);
 		$('#leftArrow').hide();
 		$('#rightArrow').hide();
 		$('#upArrow').hide();
 		$('#downArrow').hide();
+
 		
+
+		createFirstImg();
+	}
+	function createFirstImg()
+	{
+		c = document.getElementById('myCanvas');
+		ctx = c.getContext('2d');
+		var img = document.getElementById("sample");
+		ctx.width = img.width;
+		ctx.height = img.height;
+		ctx.drawImage(img, 0, 0);
 	}
 	function getSizeOfImage(file)
 	{
@@ -92,15 +104,23 @@ $(document).ready(function () {
 	$('#apply' ).click(function() {
 		
 		//progressbar.hide();
-		
+		totalSize = 0;
 		totalCols = $("#numImages option:selected").val();
 		var i = 0;
 		$(':checkbox:checked').each(function(i){
 			laneList[i] = $(this).val();
         });
-		totalRows = laneList.length;
+        if(laneList.length>0)
+        {
+			totalRows = laneList.length;
 
-        init("images");
+	        init("images");
+	    }
+	    else
+	    {
+	    	alert("请选择角度！");
+	    }
+
     });
     $('#reset' ).click(function() {
     	location.reload();
@@ -110,8 +130,6 @@ $(document).ready(function () {
 	{
 		imgFolder= _folder;
 
-		c = document.getElementById('myCanvas');
-		ctx = c.getContext('2d');
 		
 		document.body.style.margin ="0";
 		document.body.style.padding ="0";
@@ -148,23 +166,24 @@ $(document).ready(function () {
 					img.width = 600;
 					img.height = 600;
 					img.listId = totalCols*i + j;
-					img.src = imgFolder + "/" + laneList[i] + "_" + j + ".jpg";
+					img.src = imgFolder + "/" + laneList[i] + "_" + j + ".jpg?d="+ new Date().getTime();
 					img.onload = function(){
 						if(this.listId+1 != (totalRows * totalCols))
 						{
 							imgReList[this.listId] = this;
 							progressbar.progressbar( "value", Math.ceil((this.listId+1)/(totalRows * totalCols)*100));
-							progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%" );
+							progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%/下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
 							getSizeOfImage(this.src);
-							//console.log(this.src,this.listId,totalRows * totalCols);
+							
 						}
 						else
 						{
+							
 							play();
 							clearTimeout(timer);
-							//progressbar.hide()
+							
 							progressbar.progressbar( "value",0);
-							progressLabel.text("下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
+							progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%/下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
 							$('#leftArrow').hide();
 							$('#rightArrow').hide();
 							$('#upArrow').hide();
@@ -182,12 +201,12 @@ $(document).ready(function () {
 	function play()
 	{
 		//stop();
-		document.addEventListener('mousemove', onMouseMove);
-		document.addEventListener('mousedown', onMouseDown);
-		document.addEventListener('mouseup', onMouseUp);
-		document.addEventListener('touchstart', onTouchStart);
-		document.addEventListener('touchmove', onTouchMove);
-		document.addEventListener('touchend', onTouchEnd);
+		document.addEventListener('mousemove', onMouseMove,false);
+		document.addEventListener('mousedown', onMouseDown,false);
+		document.addEventListener('mouseup', onMouseUp,false);
+		document.addEventListener('touchstart', onTouchStart,false);
+		document.addEventListener('touchmove', onTouchMove,false);
+		document.addEventListener('touchend', onTouchEnd,false);
 		
 
 	}	
@@ -274,7 +293,7 @@ $(document).ready(function () {
 	}
 	
 	function trackPointer(e) {
-		console.log(ready);
+		
 		if(ready)
 		{
 			var nddY,angle;

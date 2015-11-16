@@ -10,6 +10,9 @@
 	.progress-label {
 	 	max-width: 100%;
 	 }
+	 #setting{
+ 	position: relative;
+ 	}
 }
 /*
 	Defines the criteria of the max. 480px wide mobiles' landscape mode and sets the image slider dimensions and centering according to it.
@@ -27,6 +30,9 @@
 	.progress-label {
 	 	max-width: 100%;
 	 }
+	 #setting{
+ 	position: relative;
+ 	}
 }
 /*
 	Defines the criteria of the max. 480px wide mobiles' portrait mode and sets the image slider dimensions and centering according to it.
@@ -44,6 +50,9 @@
 	 .progress-label {
 	 	max-width: 100%;
 	 }
+	 #setting{
+ 	max-width: 100%;
+ 	}
 }
 .ui-widget-header {
         background-image: none !important;
@@ -58,8 +67,11 @@
     font-weight: bold;
     text-shadow: 1px 1px 0 #fff;
   }
-
+#sample{
+	display:none;
+}
  #setting{
+ 	max-width: 100%;
  	left:100px;
  	top:50px;
  	position: absolute;
@@ -81,6 +93,7 @@
     display: block;
     width: 600px;
 }
+
 #leftArrow{
 position: absolute;
 
