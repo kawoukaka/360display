@@ -1,0 +1,454 @@
+
+body{
+    margin: 0;
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-family: 'Open Sans', sans-serif;            
+    font-size: 15px;
+}
+.bold{
+    font-weight: bold;
+}
+.error{
+    color:red;   
+}
+.bynow {
+    left: 850px;
+    top: 20px;
+    position: absolute;
+    background-image: url(../images/bynow-usd11-2.png);
+    width: 248px;
+    height: 127px;
+    /* transform: rotate(10deg); */
+    z-index: 100;
+}
+#responsive-pc-360{
+    left:223px;
+    top:49px;
+    position:relative;
+    display:inline-block;
+} 
+
+#responsive-laptop-360{
+    left:60px;
+    top:21px;
+    position:relative;
+    display:inline-block;
+}
+
+#responsive-tablet-360{
+    left:34px;
+    top:15px;
+    position:relative;
+    display:inline-block;
+
+}
+
+#responsive-phone-360{
+    left:27px;
+    top:7px;
+    position:relative;
+    display:inline-block;
+}
+.codeHolder{
+    background: #F0F0F0;
+    /*border: 1px dashed #CCCCCC;*/
+    border-left: 10px solid #DDD;
+    font-family: "Courier";
+    font-size: 12px;
+    margin: 10px 10px 10px 0px;
+    padding: 6px;
+    overflow: hidden;
+
+    display:block;
+    /*
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background:#F7F7F7;
+    padding:8px;
+    color:black;
+    font-size:12px;
+    font-family: Courier New, monospace;*/
+}
+.signature{
+    line-height: 26px;
+    font-weight: bold;
+    color:#777;
+     
+}
+.code{
+
+    font-family: Courier New, monospace;
+}
+.tab1{
+    padding-left:15px;   
+}
+.tab2{
+    padding-left:30px;   
+}
+#content{
+    width:100%;
+    background: url(../images/bg.jpg);
+
+}
+#introHeadline, #intro ,#steps, #description, #header, #footer, #testimonials, #contentHolder,  #support {
+    width:1120px;
+    margin: 0 auto;
+    position:relative;
+}
+#headerOuter{
+    border-top:5px solid #85EE61;
+    background-image:url(../images/header_background.png) ;
+    background-color:black;
+    height:45px;
+    margin:0 auto;
+    min-width:1120px;
+    width:100%;
+}
+#header{
+    color:white;
+}
+#header > .logo{
+    position:absolute;
+    top:5px;
+    left:5px;
+    width:200px;
+    height:40px;
+    background: url(../images/logo.png) no-repeat;
+}
+#header > .menu{
+    position:absolute;
+    top:5px;
+    right:15px;
+    height:40px;
+
+
+
+}
+a{
+ text-decoration: none;   
+}
+#header > .menu a{
+    display:inline-block;
+    margin-top:5px;
+    margin-left:15px;
+    font-size: 18px;
+    text-decoration: none;
+    color:#FFF;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+}
+#header > .menu a:hover{
+    text-decoration:underline;
+}
+#introHeadline{
+    background:white;
+    height:85px;
+    text-align: center;
+    padding-top:10px;
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-weight: bold;
+}
+#introHeadline > .title, h1{
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 35px;
+    line-height: 35px;
+    margin:10px 0px 10px 0px;
+    /*text-transform: uppercase;*/
+    color:#555;
+}
+#introHeadline > .subtitle{
+    font-family: CCondensed', sans-serif;
+    font-size: 25px;
+    color:#9b9b9b;footer > .copyrig
+}
+#intro{
+
+    background:white;
+      
+    height:577px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    /* background:url(../images/responsive_template_1100.png) black;*/
+}
+#intro .responsive-pc{
+    position:absolute;
+    overflow: visible;
+    height:577px;
+    width:1120px;
+    background:url(../images/responsive-pc.png)  no-repeat;
+}
+#intro .responsive-laptop{
+    position:absolute;
+    overflow: visible;
+    width: 462px;
+    height:271px;
+    background:url(../images/responsive-laptop2.png) no-repeat;
+    top: 275px;
+    left: 660px;
+}
+#intro .responsive-tablet{
+    position:absolute;
+    overflow: visible;
+    height: 209px;
+    width: 297px;
+    background:url(../images/responsive-tablet-horizontal.png)  no-repeat;
+    top: 288px;
+    left: 20px;
+}
+#intro .responsive-phone{
+    position:absolute;
+    overflow: visible;
+    width:143px;
+    height:88px;
+    background:url(../images/responsive-phone.png)  no-repeat;
+    top: 450px;
+    left: 240px;
+}
+#steps{
+     border-top:5px solid #00dc2f;
+     margin-top:15px;
+    background:white;
+    height:160px;
+}
+#steps > .step{
+    width:33.3%;
+    float:left;
+
+}
+#steps > .title{
+    width:100%;
+    height:60px;
+    color:#7b7171;
+    font-size:24px;
+    font-weight:bold;
+    line-height:55px;
+    text-indent: 25px;
+}
+
+#steps > .step1{
+    background:url(../images/shot.png) no-repeat;
+    background-position: 25px 5px;
+    height:100px;
+}
+#steps > .step2{
+    background:url(../images/upload.png) no-repeat;
+    background-position: 25px 5px;
+    height:100px;
+}
+#steps > .step3{
+    background:url(../images/play.png) no-repeat;
+    background-position: 25px 5px;
+    height:100px;
+}
+#steps .stepTitle{
+    font-size:18px;
+
+    margin-left: 105px;
+    display: inline-block;
+
+}
+#steps .stepDescription{
+    font-size:14px;
+    margin-left: 105px;
+    display: inline-block;
+    line-height: 17px;
+    margin-right: 40px;
+}
+
+#description{
+    border-top:5px solid #00dc2f;
+    margin-top:15px;
+    background:white;
+
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+}
+#descriptionInner{
+    position: relative;
+}
+#description  .features{
+    display:table-cell;
+    width:500px;
+    /*display:inline-block;*/
+    padding-left:25px;
+    padding-bottom:20px;
+    /*display:inline-block;*/
+
+}
+#description .features h2{
+    font-size:36px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight:300;
+    margin:10px 0px 10px 0px;         
+}
+
+#description  .features p{
+    font-size:15px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight:300;
+    color:black;
+}
+#description  .integration{
+    display:table-cell;
+    width:500px;
+    /*display:inline-block;*/
+    padding-left:25px;
+    padding-bottom:20px;
+    margin-top:0px;
+}
+#description .integration h2{
+    font-size:36px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight:300;
+    margin:10px 0px 10px 0px;         
+}
+#testimonials{
+    margin-top:15px;
+    background:#BEDBDC;
+    font-family: 'Open Sans', sans-serif;
+}
+#testimonialsInner{
+    position: relative;
+    margin:0px;
+    padding:20px;
+    padding-left:25px;
+}
+#testimonialsInner h2{
+    position:relative;
+    font-size:36px;
+    font-weight:300;
+    margin:0px;
+
+}
+
+#testimonialsInner p{
+    font-size:15px;
+    font-weight:300;
+    color:black;
+    font-style:italic;
+}
+
+#footerOuter{
+    background:black;
+    height:45px;
+    min-width:1120px;
+}
+#footer{
+
+}
+
+#footer > .footerMenu a{
+    display:inline-block;
+    margin-top:12px;
+    margin-left:15px;
+    font-size: 14px;
+    text-decoration: none;
+    color:#FFF;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+}
+#footer > .footerMenu a:hover{
+    text-decoration:underline;
+}
+#footer > .copyright{
+    position:absolute;
+    top:0px;
+    right:15px;
+    display:inline-block;
+    margin-top:12px;
+    margin-left:15px;
+    color:#999;
+    float:right;
+}
+
+#contentHolder{
+    background:#BEDBDC;
+}
+
+#leftNavi{
+    float:left;
+    width:200px;
+    padding:20px;
+}
+#leftNavi h2{
+    position:relative;
+  
+    margin:0px;
+
+}
+
+#leftNavi p{
+    font-size:15px;
+    font-weight:300;
+    color:black;
+}
+#leftNavi a{
+  color:black;
+  text-decoration:none;
+  font-weight: 500;
+   text-shadow: 1px 1px #EAEAEA;
+}
+#leftNavi a:hover{
+    text-decoration:underline;
+}
+#rightContent{
+    display: inline-block;
+    margin:0 auto;
+    background: white;
+    width:600px;
+    padding:0px 30px 30px 30px;
+  
+    /*width:100%;*/
+}
+#rightContent h2{
+}
+
+
+/*
+>> LIGHTBOX CSS >>
+*/
+#View360-modalBackground{  
+    position:fixed; /* keeps the lightbox window in the current viewport */
+    top:0; 
+    left:0; 
+    width:100%; 
+    height:100%; 
+    background:rgba(0,0,0,0.75);
+    text-align:center;
+
+    z-index: 9998;
+}
+#View360-lighboxOuter {  
+    position:absolute;
+    display:table-cell;
+    vertical-align:middle;
+    top:0px; bottom:0px; left:0px; right:0px;
+    height:100%;
+    text-align:center; /* used to center div in IE */
+    z-index: 9999;
+}
+#View360-lighbox {
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    width:600px; 
+    height:400px; 
+    background:#fff; 
+    text-align:left;
+    border:1px solid #ccc;
+    border-top:none; 
+    border-radius:0 0 5px 5px;
+    -moz-border-radius:0 0 0px 0px;
+    -webkit-border-radius: 0 0 0px 0px; 
+    box-shadow:0px 5px 25px #0E0E0E;
+    -moz-box-shadow:0px 5px 25px #0E0E0E;
+    -webkit-box-shadow:0px 5px 25px #0E0E0E;
+}
+/*
+<< LIGHTBOX CSS <<
+*/

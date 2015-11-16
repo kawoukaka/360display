@@ -114,7 +114,7 @@ $(document).ready(function () {
         {
 			totalRows = laneList.length;
 
-	        init("images");
+	        init("products/bag");
 	    }
 	    else
 	    {
@@ -156,6 +156,41 @@ $(document).ready(function () {
 		    });
 			
 		}
+	function loadNext()
+	{
+		
+		
+		if (currentNum < (totalRows * totalCols)) 
+		{		
+			currentNum++;
+			var img = new Image();
+			
+			img.src = imgFolder+ "/" + laneList[i] + "_" + currentNum + ".jpg";
+
+			img.onload = function(){
+				
+				imgReList[this.listId] = this;
+				progressbar.progressbar( "value", Math.ceil((this.listId+1)/(totalRows * totalCols)*100));
+				progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%/下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
+				getSizeOfImage(this.src);
+
+			};		
+		} 
+		
+		if(currentNum == (totalRows * totalCols-1))
+		{
+			play();
+			clearTimeout(timer);
+			
+			progressbar.progressbar( "value",0);
+			progressLabel.text("加载了：" +  Math.ceil((this.listId+1)/(totalRows * totalCols)*100) + "%/下载用时" + countTime + "秒 || 下载了" + Math.floor(totalSize/1024) + "KB文件");
+			$('#leftArrow').hide();
+			$('#rightArrow').hide();
+			$('#upArrow').hide();
+			$('#downArrow').hide();
+		}
+
+	}
 	function loadImages()
 	{
 		for(var i=0;i<totalRows;i++)
@@ -259,7 +294,7 @@ $(document).ready(function () {
 		mouseStartXposition = getPointerEvent(e).pageX;
 		mouseStartYposition = getPointerEvent(e).pageY;
 		
-		console.log(mouseStartXposition);
+		//console.log(mouseStartXposition);
 	}
 	function refresh () {
 
@@ -270,6 +305,7 @@ $(document).ready(function () {
 	}
 	function render()
 	{
+		console.log(currentCol,endCol)
 		if(currentCol !== endCol)
 		{	
 			var frameEasingX = endCol < currentCol ? Math.floor((endCol - currentCol) * 0.1) : Math.ceil((endCol - currentCol) * 0.1);
@@ -321,7 +357,7 @@ $(document).ready(function () {
 
 			  	indy = Math.floor(Math.min(currentRow, totalRows));
 			    indy = Math.floor(Math.max(currentRow, 0));
-			    
+			    console.log(indy);
 				refresh();
 				
 				showImage(indx + indy * totalCols);
@@ -350,8 +386,10 @@ $(document).ready(function () {
 
 		if (id >= 0 && id < imgReList.length){
 				var img = imgReList[id];
+				console.log(id,img);
 				if(img && img.complete !== false)
 				{
+					
 					ctx.clearRect(0, 0, img.width, img.height);
 					ctx.width = img.width;
 					ctx.height = img.height;
