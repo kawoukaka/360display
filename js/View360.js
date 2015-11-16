@@ -975,7 +975,7 @@ var View360 = function(){
 
     this.autoCreateImages = function(){
 
-       
+
         if(!this.config.autoLoadImages) return;
 
 
@@ -992,6 +992,7 @@ var View360 = function(){
                 this.sources.push(name);
             }
         }
+        //console.log("internal:",this.sources);
         this.config.rowsList = [];
         this.config.columnsList = [];
     },
@@ -1325,7 +1326,7 @@ function View360Loader(sources) {
 
     this.loadImages = function(from, to, _callbackOne, _callbackAll, _callbackProgress, _callbackEach){
         var countTime=0;
-        var timer=setTimeout(function(){countTime++;},1000);
+        var timer=setInterval(function(){countTime++;},100);
         var self = this;
 
         var loadedImages = 0;
@@ -1353,7 +1354,7 @@ function View360Loader(sources) {
 
             this.images[i] = new Image();
             this.images[i].onload = function(e) {
-
+                //console.log(countTime);
                 loadedImages++
                 getSizeOfImage(this.src);
                 if (loadedImages==1){
@@ -1361,8 +1362,8 @@ function View360Loader(sources) {
                 }
 
                 if (loadedImages >= numImages) {
-                    clearTimeout(timer);
-                    $("#info").text("此次下载用时：" + countTime + "秒/ 共计下载" + Math.ceil(totalSize/1024) + "KB文件");
+                    clearInterval(timer);
+                    $("#info").text("此次下载用时：" + countTime + "毫秒/ 共计下载" + Math.ceil(totalSize/1024) + "KB文件");
                     _callbackAll(self.images,  errorCount );
                 }
 

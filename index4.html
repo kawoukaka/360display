@@ -71,7 +71,7 @@
                     <input type="checkbox" id="numLane8" value="7">8号角度<br>
                     <input type="checkbox" id="numLane9" value="8">9号角度<br>
                     <button type="button" id="apply">应用</button>
-                    <button type="reset" id="reset">重置</button>
+                    
                     </form>
                 </div>
                 <div id = "info"> </div>
@@ -107,27 +107,29 @@
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
             <script>
                         var i = 0,
-                        rowList = [],
-                        colList = [],
+                        rowList,
+                        colList,
                         totalRows,
                         totalCols,
                         cImages = 50;
                      
 
                         $('#apply' ).click(function() {
+                             rowList = [];
+                             colList = [];
                              totalCols = $("#numImages option:selected").val();
                              
                             for(i = 0; i < totalCols ; i++)
                             {
                                
-                                if(i * Math.ceil(cImages/totalCols)<cImages)
+                                if(i * Math.floor(cImages/totalCols)<cImages)
                                 {
-                                    colList.push(i* Math.ceil(cImages/totalCols));
+                                    colList.push(i* Math.floor(cImages/totalCols));
                                     
                                 }
                             }
-                           console.log(colList);
-
+                          
+                            console.log("external:",colList);
                             $(':checkbox:checked').each(function(i){
                                 rowList[i] = $(this).val();
                             });
