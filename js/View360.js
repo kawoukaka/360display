@@ -1363,7 +1363,7 @@ function View360Loader(sources) {
 
                 if (loadedImages >= numImages) {
                     clearInterval(timer);
-                    $("#info").text("此次下载用时：" + countTime + "毫秒/ 共计下载" + Math.ceil(totalSize/1024) + "KB文件");
+                    $("#info").text("此次下载用时：" + countTime*100 + "毫秒/ 共计下载" + Math.ceil(totalSize/1024) + "KB文件");
                     _callbackAll(self.images,  errorCount );
                 }
 
