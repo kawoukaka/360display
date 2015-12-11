@@ -33,17 +33,20 @@ var View360 = function(){
         height: 600,
 
         imagesDirectory: "products/bag",
+        scaleDirectory: "scale/bag",
         fullSizeImagesDirectory:"products/bag",
 
         images:[],
-
+        scaleImages:[],
         autoLoadImages: true,
+        autoLoadScales: true,
         imagesPattern: "%ROW_%COL.jpg",
 
         rows: 9,
         columns: 50,
         rowsList:[],
         columnsList:[],
+
 
         xAxisSensitivity : 30,
         yAxisSensitivity : 40,
@@ -123,6 +126,7 @@ var View360 = function(){
     this.autoCol = 0;
 
     this.images = [];
+    this.scaleImages = [];
 
     this.clickableAreaObj = null;
 
@@ -436,25 +440,26 @@ var View360 = function(){
     this.displayImageByIdx = function(idx){
 
         this.latestImageIdx = idx;
+        var scaleObj = this.scaleImages[idx];
         var imgObj = this.images[idx];
-
         if(this.fullSizeImages && this.fullSizeImages[idx] && this.fullSizeImages[idx].complete){
+            var scaleObj = this.scaleImages[idx];
             var imgObj = this.fullSizeImages[idx];
         }
-
-        this.displayImage(imgObj);
+        this.displayImage(imgObj,scaleObj);
 
     }
 
-    this.displayImage = function(imgObj, opacity){
+    this.displayImage = function(imgObj, scaleObj){
         this.latestImageObj = imgObj;
-        this. fitImageOn(this.canvas, imgObj );
+        this.latestScaleObj = scaleObj;
+        this.fitImageOn(this.canvas, imgObj, scaleObj);
     //this._drawImage()
     }
 
     this.panMoveEmptyX = 0;
     this.panMoveEmptyY = 0;
-    this.fitImageOn = function(canvas, iobj) {
+    this.fitImageOn = function(canvas, iobj, sobj) {
 
         var imageAspectRatio = iobj.width / iobj.height;
         var canvasAspectRatio = canvas.width / canvas.height;
@@ -530,7 +535,8 @@ var View360 = function(){
            }
 
         }
-
+        ctx.drawImage( sobj, zoomedXPos, zoomedYPos, zoomedRenW , zoomedRenH );
+        ctx.globalAlpha = 0.8;
         ctx.drawImage( iobj, zoomedXPos, zoomedYPos, zoomedRenW , zoomedRenH );
 
     }
@@ -925,6 +931,7 @@ var View360 = function(){
                 }
 
             }
+            
             var callbackAll = function(_images, errorCount ) {
                 self.fullSizeLoaderInfo.hide();
                 self.fullSizeImages = _images;
@@ -936,7 +943,9 @@ var View360 = function(){
             fullSizeLoader.setCallbackEach (callbackEach);
             fullSizeLoader.setCallbackProgress (callbackProgress);
             fullSizeLoader.setSources(this.sources);
+            fullSizeLoader.setScaleSources(this.scaleSources);
             fullSizeLoader.setDirectory(this.config.fullSizeImagesDirectory);
+            fullSizeLoader.setScale(this.config.scaleDirectory);
             fullSizeLoader.start();
 
             self.fullSizeImages = fullSizeLoader.getImages();
@@ -993,10 +1002,33 @@ var View360 = function(){
             }
         }
         //console.log("internal:",this.sources);
-        this.config.rowsList = [];
-        this.config.columnsList = [];
+        //this.config.rowsList = [];
+        //this.config.columnsList = [];
     },
+    this.autoCreateScales = function(){
 
+
+        if(!this.config.autoLoadScales) return;
+
+
+        var p = this.config.imagesPattern;
+
+        this.config.scales = new Array();
+        this.scaleSources = new Array();
+        for(var r=0; r<this.config.rows; r++){
+            this.config.scales[r] = new Array();
+            for(var c=0; c<this.config.columns; c++){
+                if(!this.config.scales[c] )this.config.scales[c] = new Array();
+                var name = p.replace("%ROW", this.config.rowsList[r]).replace("%COL", this.config.columnsList[c]);
+                this.config.scales[c].push(name);
+                this.scaleSources.push(name);
+            }
+        }
+
+        //console.log("internal:",this.scaleSources);
+       // this.config.rowsList = [];
+       //this.config.columnsList = [];
+    },
     this.calculate = function(){
 
         this.rows = 0;
@@ -1100,6 +1132,7 @@ var View360 = function(){
         this.panMoveY = 0;
 
         this.autoCreateImages();
+        this.autoCreateScales();
         this.calculate();
         this.addInterface();
         this.bindEvents();
@@ -1112,9 +1145,10 @@ var View360 = function(){
         this.loaderInfo.show();
 
         var sources = this.sources; // [].concat.apply( this.config.images )
+        var scaleSources = this.scaleSources;
 
         var canvas = this.canvas = V360Util.getFirstElementByClassName( this.innerHolder, "View360-canvas" );
-        var canvasHolder = this.canvasHolder = V360Util.getFirstElementByClassName( this.innerHolder, "View360-canvasHolder" );
+       var canvasHolder = this.canvasHolder = V360Util.getFirstElementByClassName( this.innerHolder, "View360-canvasHolder" );
 
         self.updateCanvasSize();
 
@@ -1142,13 +1176,35 @@ var View360 = function(){
             self.loaderInfo.hide();
 
             if(self.navigationConfig.showButtons){
-                //
+                
                 self.navigationHolder.style.visibility = "visible";
             }else{
                 self.navigationHolder.style.display = "none";
             }
+            if(_images)
+                self.images = _images;
+            
+            self.displayImageByIdx(0);
 
-            self.images = _images;
+            if(self.config.autoRotate) self.startAutoRotate();
+            else if(self.config.oneTurnOnStartUp) self.startInertiaAutoMoveInterval(true);
+
+        }
+        var callbackScaleAll = function(_scales, errorCount ) {
+
+            self.smallLoaded = true;
+
+            self.loaderInfo.hide();
+
+            if(self.navigationConfig.showButtons){
+                
+                self.navigationHolder.style.visibility = "visible";
+            }else{
+                self.navigationHolder.style.display = "none";
+            }
+            if(_scales)
+                self.scaleImages = _scales;
+            
             self.displayImageByIdx(0);
 
             if(self.config.autoRotate) self.startAutoRotate();
@@ -1158,9 +1214,12 @@ var View360 = function(){
 
         loader.setCallbackOne (callbackOne);
         loader.setCallbackAll (callbackAll);
+        loader.setCallbackScaleAll(callbackScaleAll);
         loader.setCallbackProgress (callbackProgress);
         loader.setSources(sources);
+        loader.setScaleSources(scaleSources);
         loader.setDirectory(this.config.imagesDirectory);
+        loader.setScale(this.config.scaleDirectory);
         loader.start();
 
 
@@ -1191,7 +1250,9 @@ var View360 = function(){
     this.setImagesDirectory = function(imagesDirectory){
         this.setProperty("imagesDirectory", imagesDirectory);
     }
-
+    this.setScaleDirectory = function(scaleDirectory){
+        this.setProperty("scaleDirectory", scaleDirectory);
+    }
     this.setFullSizeImagesDirectory = function(fullSizeImagesDirectory){
         this.setProperty("fullSizeImagesDirectory", fullSizeImagesDirectory);
     }
@@ -1263,30 +1324,41 @@ function View360UtilStatic() {
 V360Util = new View360UtilStatic();
 
 
-function View360Loader(sources) {
+function View360Loader(sources,scaleSources) {
 
     this.sources = sources;
+    this.scaleSources = scaleSources
     this.directory;
-
+    this.scale;
     this.callbackOne = function(){};
     this.callbackAll = function(){};
     this.callbackEach = function(){};
     this.callbackOn = {};
 
     this.images = [];
+    this.scaleImages = [];
     this.totalImages;
 
     this.setDirectory = function(directory){
         this.directory = directory
     }
+     this.setScale = function(scale){
+        this.scale = scale
+    }
     this.setSources = function(sources){
         this.sources = sources
+    }
+    this.setScaleSources = function(scaleSources){
+        this.scaleSources = scaleSources
     }
     this.setCallbackOne = function(callbackOne){
         this.callbackOne = callbackOne
     }
     this.setCallbackAll = function(callbackAll){
         this.callbackAll = callbackAll;
+    }
+    this.setCallbackScaleAll = function(callbackScaleAll){
+        this.callbackScaleAll = callbackScaleAll;
     }
     this.setCallbackEach = function(callbackEach){
         this.callbackEach = callbackEach;
@@ -1311,19 +1383,75 @@ function View360Loader(sources) {
             function(image, error){
                 self.callbackOne(image,  error);
             }, function(images, errorCount){
-                self.callbackAll(images, errorCount);
+                self.callbackAll(images,errorCount);
             }, function(progressObj){
                 self.callbackProgress(progressObj);
             }, function(image, error){
                 self.callbackEach(image, error);
             });
-
+        this.loadScaleImages(    0,
+            this.scaleSources.length-1,
+            function(image, error){
+                self.callbackOne(image,  error);
+            }, function(scales, errorCount){
+                self.callbackScaleAll(scales, errorCount);
+            }, function(image, error){
+                self.callbackEach(image, error);
+            });
     }
 
     this.getImages = function(){
         return this.images;
     }
+    this.loadScaleImages = function(from, to, _callbackOne, _callbackScaleAll, _callbackEach){
+        var countTime=0;
+        var self = this;
 
+        var loadedScale = 0;
+        var numImages = 0;
+        var errorScaleCount = 0;
+        var totalSize = 0;
+        // get num of scaleSources
+        var numImages = to-from  + 1
+        
+        for (var i=from; i<=to; i++) {
+            this.scaleImages[i] = new Image();
+            this.scaleImages[i].onload = function(e) {
+                 loadedScale++
+               if (loadedScale==1){
+                    _callbackOne(e.currentTarget,  false );
+                }
+
+                if (loadedScale >= numImages) {
+                    _callbackScaleAll(self.scaleImages,  errorScaleCount );
+                }
+
+                //_callbackEach(e.currentTarget, false);
+
+                
+            }
+            this.scaleImages[i].onerror = function(e) {
+
+                errorScaleCount++;
+
+                if (loadedImages==0){
+                    _callbackOne(e.currentTarget,  true );
+                }
+                if (++loadedImages >= numImages) {
+                    _callbackAll(self.scaleImages,  errorScaleCount );
+                }
+
+                //_callbackEach(e.currentTarget, true);
+
+
+            };
+
+            this.scaleImages[i].src = this.scale + "/" + this.scaleSources[i] + "?d=" + new Date().getTime();
+
+        }
+
+
+    }
     this.loadImages = function(from, to, _callbackOne, _callbackAll, _callbackProgress, _callbackEach){
         var countTime=0;
         var timer=setInterval(function(){countTime++;},100);
@@ -1351,10 +1479,10 @@ function View360Loader(sources) {
             xhr.send(null);
         };
         for (var i=from; i<=to; i++) {
-
+            
             this.images[i] = new Image();
             this.images[i].onload = function(e) {
-                //console.log(countTime);
+               
                 loadedImages++
                 getSizeOfImage(this.src);
                 if (loadedImages==1){
@@ -1364,10 +1492,10 @@ function View360Loader(sources) {
                 if (loadedImages >= numImages) {
                     clearInterval(timer);
                     $("#info").text("此次下载用时：" + countTime*100 + "毫秒/ 共计下载" + Math.ceil(totalSize/1024) + "KB文件");
-                    _callbackAll(self.images,  errorCount );
+                    _callbackAll(self.images,errorCount );
                 }
 
-                _callbackEach(e.currentTarget, false);
+               // _callbackEach(e.currentTarget, false);
 
                 var percent = Math.ceil((loadedImages/numImages)*100);
                 _callbackProgress({
@@ -1378,6 +1506,7 @@ function View360Loader(sources) {
                 });
 
             };
+            
             this.images[i].onerror = function(e) {
 
                 errorCount++;
@@ -1386,10 +1515,10 @@ function View360Loader(sources) {
                     _callbackOne(e.currentTarget,  true );
                 }
                 if (++loadedImages >= numImages) {
-                    _callbackAll(self.images,  errorCount );
+                    _callbackAll(self.images, errorCount );
                 }
 
-                _callbackEach(e.currentTarget, true);
+               // _callbackEach(e.currentTarget, true);
 
                 var percent = Math.ceil((loadedImages/numImages)*100);
                 _callbackProgress({
@@ -1402,7 +1531,6 @@ function View360Loader(sources) {
             };
 
             this.images[i].src = this.directory + "/" + this.sources[i] + "?d=" + new Date().getTime();
-
         }
 
 
